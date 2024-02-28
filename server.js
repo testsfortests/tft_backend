@@ -7,11 +7,11 @@ app.use(cors())
 
 import { initializeTelegramBot } from './utils/telegram.js';
 import telegramRoutes from "./routes/telegramRoutes.js"
-import sheetRoutes from "./routes/sheetRoutes.js"
+// import sheetRoutes from "./routes/sheetRoutes.js"
 import { PORT } from './config/env.js';
 
 app.use(express.json()) 
-app.use("/sheet", sheetRoutes)
+// app.use("/sheet", sheetRoutes)
 app.use("/tele", telegramRoutes)
 
 app.get("/",(req,res)=>{
