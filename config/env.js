@@ -6,3 +6,5 @@ export const SHEET_SCOPE_URL = 'https://www.googleapis.com/auth/spreadsheets.rea
 export const TESTING_CHAT_ID = "-1002141955840"
 export const BOT_TOKEN = "6642256096:AAGqXFBKyzuM7dVvQOAVJ081ZRwHXQvbfcM"
 export const POLL_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendPoll`;
+export const SEND_MSG_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
