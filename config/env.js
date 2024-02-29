@@ -10,10 +10,7 @@ export const DATA_SHEET_NAME="DATA!A1:Z"
 
 export const SHEET_SCOPE_URL = 'https://www.googleapis.com/auth/spreadsheets.readonly';
 
-// export const SHEET_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_KEY}/values/${SHEET_NAME}`;
 export function generateSheetUrl(spreadsheetKey, sheetName) {
-    console.log("callled",spreadsheetKey,sheetName)
-    console.log("callled2",`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetKey}/values/${sheetName}`)
     return `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetKey}/values/${sheetName}`;
 }
 export const API_KEY = "AIzaSyAGAU7w5whpGwWbI-Cw6m1_6cqc0AkYuDM"
