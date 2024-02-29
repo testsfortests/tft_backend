@@ -22,7 +22,7 @@ router.post('/send-message', async (req, res) => {
 });
 
 router.post('/send-poll', async(req, res) => {
-    const getDataResponse = await axios.get(BASE_URL+'sheet/google-sheet-data');
+    const getDataResponse = await axios.get(BASE_URL+'sheet/getAllData');
 
     const question_index = req.body && req.body.question_index ? req.body.question_index : 2;
     const question_data = getDataResponse.data.data.values[question_index]
