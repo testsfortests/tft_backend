@@ -1,9 +1,8 @@
 // import { google } from 'googleapis';
 import axios from 'axios';
 // import credentials from '../resource/credentials.json' assert { type: 'json' };
-import { SPREADSHEET_KEY,SHEET_SCOPE_URL,API_KEY,SHEET_URL } from '../config/env.js';
-
-const RANGE = 'SHEET22!A1:Z'; 
+import {SHEET_SCOPE_URL,API_KEY,generateSheetUrl } from '../config/env.js';
+// const RANGE = 'SHEET22!A1:Z'; 
 
 // async function getGoogleSheetData() {
 //   const auth = new google.auth.GoogleAuth({
@@ -29,9 +28,12 @@ const RANGE = 'SHEET22!A1:Z';
 //   }
 // }
 
-async function getDataFromSheet() {
+async function getDataFromSheet(SPREADSHEET_KEY,SHEET_NAME) {
   try {
-    const response = await axios.get(SHEET_URL, {
+    console.log(SPREADSHEET_KEY,SHEET_NAME,"pawan")
+    sheet_url = generateSheetUrl(SPREADSHEET_KEY,SHEET_NAME)
+    console.log(sheet_url,"and",API_KEY)
+    const response = await axios.get(sheet_url, {
         params: {
             key: API_KEY, // Replace with your Google Sheets API key
             // Additional parameters as needed
@@ -39,7 +41,7 @@ async function getDataFromSheet() {
     });
     return response.data; 
   } catch (error) {
-    console.error('Error retrieving data:', error);
+    console.error('Error retrieving data:', error.message);
     throw error;
   }
 }
