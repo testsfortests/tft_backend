@@ -25,7 +25,7 @@ export function initializeTelegramBot() {
 
         bot.sendMessage(chatId, messageText)
             .then(() => {
-                console.log('Message sent successfully');
+                console.log('Message sent successfully',messageText);
             })
             .catch(error => {
                 console.error('Error sending message:', error.message);
