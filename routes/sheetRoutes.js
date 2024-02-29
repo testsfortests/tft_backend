@@ -1,6 +1,6 @@
 import express from 'express';
 // import {getDataFromSheet} from "../utils/sheet.js";
-import {getGoogleSheetData} from "../utils/sheet2.js";
+// import {getGoogleSheetData} from "../utils/sheet2.js";
 import {getDataFromSheet} from "../utils/sheet3.js";
 const router = express.Router();
 import { SPREADSHEET_KEY,SHEET_NAME, DATA_SPREADSHEET_KEY, DATA_SHEET_NAME} from '../config/env.js';
@@ -15,7 +15,7 @@ import { SPREADSHEET_KEY,SHEET_NAME, DATA_SPREADSHEET_KEY, DATA_SHEET_NAME} from
 //       }
 // });
 
-router.get('/jwtAllData', async (req, res) => {
+router.get('/getAllData', async (req, res) => {
       try {
         const data = await getDataFromSheet();
         res.json(data)
@@ -25,18 +25,18 @@ router.get('/jwtAllData', async (req, res) => {
 });
 
 // Route for retrieving data from Google Sheet
-router.get('/getAllData', async (req, res) => {
-  try {
-    // const sheetId = 'YOUR_SHEET_ID';
-    // const range = 'Sheet1!A1:B5';
+// router.get('/getAllData', async (req, res) => {
+//   try {
+//     // const sheetId = 'YOUR_SHEET_ID';
+//     // const range = 'Sheet1!A1:B5';
 
-    const data = await getDataFromSheet(SPREADSHEET_KEY,SHEET_NAME);
-    res.json({ success: true, data });
-  } catch (error) {
-    console.error('Error in retrieving data from Google Sheet:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
+//     const data = await getDataFromSheet(SPREADSHEET_KEY,SHEET_NAME);
+//     res.json({ success: true, data });
+//   } catch (error) {
+//     console.error('Error in retrieving data from Google Sheet:', error);
+//     res.status(500).json({ success: false, error: error.message });
+//   }
+// });
 
 
 
