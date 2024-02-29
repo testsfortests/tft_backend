@@ -18,6 +18,7 @@ export function generateSheetUrl(spreadsheetKey, sheetName) {
 }
 export const API_KEY = "AIzaSyAGAU7w5whpGwWbI-Cw6m1_6cqc0AkYuDM"
 
+
 export const TESTING_CHAT_ID = "-1002141955840"
 export const BOT_TOKEN = "6642256096:AAGqXFBKyzuM7dVvQOAVJ081ZRwHXQvbfcM"
 export const POLL_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendPoll`;
