@@ -10,6 +10,8 @@ import telegramRoutes from "./routes/telegramRoutes.js"
 // import sheetRoutes from "./routes/sheetRoutes.js"
 import { PORT } from './config/env.js';
 
+const bot = initializeTelegramBot();
+
 app.use(express.json()) 
 // app.use("/sheet", sheetRoutes)
 app.use("/tele", telegramRoutes)
@@ -17,8 +19,6 @@ app.use("/tele", telegramRoutes)
 app.get("/",(req,res)=>{
     res.send("<h1>Hello World!!!</h1>")
 })
-
-const bot = initializeTelegramBot();
 
 const server = app.listen(PORT, () => {
     const host = server.address().address;
