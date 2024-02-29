@@ -13,7 +13,7 @@ const router = express.Router();
 // });
 
 // Route for retrieving data from Google Sheet
-router.get('/google-sheet-data', async (req, res) => {
+router.get('/getAllData', async (req, res) => {
   try {
     // const sheetId = 'YOUR_SHEET_ID';
     // const range = 'Sheet1!A1:B5';

@@ -1,4 +1,6 @@
 export const PORT=4000
+export const BASE_URL = 'https://tft-backend.vercel.app/'
+
 
 export const SPREADSHEET_KEY="14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I"
 export const SHEET_NAME="SHEET2!A1:Z"
