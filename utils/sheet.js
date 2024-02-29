@@ -16,4 +16,22 @@ async function getDataFromSheet(SPREADSHEET_KEY,SHEET_NAME) {
   }
 }
 
-export {getDataFromSheet};
+function getInfoBySubjectAndSheetName(data, subject, sheetName) {
+  for (let i = 1; i < data.values.length; i++) {
+      if (data.values[i][0] === subject) {
+          const sheetIndex = data.values[i].indexOf(sheetName);
+          console.log("sheet index pawan",sheetIndex)
+          if (sheetIndex !== -1 && sheetIndex % 2 !== 0) {
+              const sheetKey = data.values[i][1];
+              const chatId = data.values[i][2];
+              const question_index = data.values[i][sheetIndex + 1];
+              return { sheetKey, chatId, question_index };
+          }
+      }
+  }
+  return null; 
+}
+
+
+
+export {getDataFromSheet,getInfoBySubjectAndSheetName};

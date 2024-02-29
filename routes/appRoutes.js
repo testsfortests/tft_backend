@@ -22,15 +22,12 @@ router.post('/send-message', async (req, res) => {
 });
 
 router.post('/send-poll', async(req, res) => {
-    const getDataResponse = await axios.get(BASE_URL+'sheet/getAllData');
+    const question = req.body && req.body.question ? req.body.question :"What is the capital of India?";        
+    const options = req.body && req.body.options ? req.body.options : ["Bombay","New Delhi","Calcutta","Delhi"];        
+    const answer = req.body && req.body.answer ? req.body.answer :  2  ;        
+    const explanation = req.body && req.body.explanation ? req.body.explanation : "VISIT TESTS FOR TESTS";        
 
-    const question_index = req.body && req.body.question_index ? req.body.question_index : 2;
-    const question_data = getDataResponse.data.data.values[question_index]
-    const question = question_data[0]
-    const options = question_data.slice(1,5);        
-    const answer =     parseInt(question_data[5]);
-    const explanation =     question_data[6];
-
+    console.log(question)
     const parameters = {
         "chat_id": TESTING_CHAT_ID,
         "question": question,
@@ -50,7 +47,7 @@ router.post('/send-poll', async(req, res) => {
         console.log("Poll sent successfully.", response.data);
         res.status(200).json({ success: true, data: response.data }); 
     } catch (error) {
-        console.error("Error:", error.message,"API POLL FAILED");
+        console.error("Error:", error.message);
         res.status(500).json({ success: false, error: error }); 
     }
     

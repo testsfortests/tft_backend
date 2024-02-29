@@ -16,7 +16,7 @@ const bot = initializeTelegramBot();
 app.use(express.json()) 
 
 app.use("/sheet", sheetRoutes)
-app.use("/tel", telegramRoutes)
+app.use("/tele", telegramRoutes)
 app.use("/api", appRoutes)
 
 app.get("/",(req,res)=>{
