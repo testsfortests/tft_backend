@@ -1,13 +1,23 @@
 import express from 'express';
-import {getDataFromSheet} from "../utils/sheet.js";
+// import {getDataFromSheet} from "../utils/sheet.js";
 import {getGoogleSheetData} from "../utils/sheet2.js";
+import {getDataFromSheet} from "../utils/sheet3.js";
 const router = express.Router();
 import { SPREADSHEET_KEY,SHEET_NAME, DATA_SPREADSHEET_KEY, DATA_SHEET_NAME} from '../config/env.js';
 
 // Get All Data 
-router.get('/googleapisAllData', async (req, res) => {
+// router.get('/googleapisAllData', async (req, res) => {
+//       try {
+//         const data = await getGoogleSheetData();
+//         res.json(data)
+//       } catch (error) {
+//         res.status(500).json({ message: error.message });
+//       }
+// });
+
+router.get('/jwtAllData', async (req, res) => {
       try {
-        const data = await getGoogleSheetData();
+        const data = await getDataFromSheet();
         res.json(data)
       } catch (error) {
         res.status(500).json({ message: error.message });
