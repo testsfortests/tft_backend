@@ -16,11 +16,11 @@ async function getDataFromSheet(SPREADSHEET_KEY,SHEET_NAME) {
   }
 }
 
+
 function getInfoBySubjectAndSheetName(data, subject, sheetName) {
   for (let i = 1; i < data.values.length; i++) {
       if (data.values[i][0] === subject) {
           const sheetIndex = data.values[i].indexOf(sheetName);
-          console.log("sheet index pawan",sheetIndex)
           if (sheetIndex !== -1 && sheetIndex % 2 !== 0) {
               const sheetKey = data.values[i][1];
               const chatId = data.values[i][2];
@@ -32,6 +32,5 @@ function getInfoBySubjectAndSheetName(data, subject, sheetName) {
   return null; 
 }
 
-
-
-export {getDataFromSheet,getInfoBySubjectAndSheetName};
+// can update data in sheet using googleapis and google-auth-library, but these are not supported by vercel 
+export {getDataFromSheet, getInfoBySubjectAndSheetName};
