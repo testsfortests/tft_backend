@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {API_KEY,generateSheetUrl } from '../config/env.js';
 
+// done
 async function getDataFromSheet(SPREADSHEET_KEY,SHEET_NAME) {
   try {
     const sheet_url = generateSheetUrl(SPREADSHEET_KEY,SHEET_NAME)
@@ -11,21 +12,19 @@ async function getDataFromSheet(SPREADSHEET_KEY,SHEET_NAME) {
     });
     return response.data; 
   } catch (error) {
-    console.error('Error retrieving data:', error.message);
-    throw error;
+    return null
   }
 }
 
-
+// done
 function getInfoBySubjectAndSheetName(data, subject, sheetName) {
   for (let i = 1; i < data.values.length; i++) {
       if (data.values[i][0] === subject) {
           const sheetIndex = data.values[i].indexOf(sheetName);
-          if (sheetIndex !== -1 && sheetIndex % 2 !== 0) {
+          if (sheetIndex !== -1) {
               const sheetKey = data.values[i][1];
               const chatId = data.values[i][2];
-              const question_index = data.values[i][sheetIndex + 1];
-              return { sheetKey, chatId, question_index };
+              return { sheetKey, chatId };
           }
       }
   }

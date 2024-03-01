@@ -1,38 +1,35 @@
 import express from 'express';
 import axios from 'axios';
 const router = express.Router();
-import { TESTING_CHAT_ID,POLL_URL,SEND_MSG_URL } from '../config/env.js';
+import { TESTING_CHAT_ID,POLL_URL,SEND_MSG_URL,BASE_URL } from '../config/env.js';
 
-
+//done
 router.post('/send-message', async (req, res) => {
     try {
         const message = req.body && req.body.message ? req.body.message : "HELLO, I AM TFTBOT";
-      
+        const chatId = req.body && req.body.chatId ? req.body.chatId :  TESTING_CHAT_ID  ;        
+
         const messageParams = {
-            chat_id: TESTING_CHAT_ID, 
+            chat_id: chatId, 
             text: message
         };
         const response = await axios.post(SEND_MSG_URL, messageParams);
-        console.log('Message sent successfully:', response.data);
-        res.status(200).json({ success: true, data: response.data });
+        res.status(200).json({ success: true,message:'Message sent successfully', data: response.data });
     } catch (error) {
-        console.error('Error sending message:', error.message);
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false,message:'Error sending message', error: error.message });
     }
 });
 
+//done
 router.post('/send-poll', async(req, res) => {
-    const getDataResponse = await axios.get(BASE_URL+'sheet/getAllData');
-
-    const question_index = req.body && req.body.question_index ? req.body.question_index : 2;
-    const question_data = getDataResponse.data.data.values[question_index]
-    const question = question_data[0]
-    const options = question_data.slice(1,5);        
-    const answer =     parseInt(question_data[5]);
-    const explanation =     question_data[6];
+    const question = req.body && req.body.question ? req.body.question :"What is the capital of India?";        
+    const options = req.body && req.body.options ? req.body.options : ["Bombay","New Delhi","Calcutta","Delhi"];        
+    const answer = req.body && req.body.answer ? req.body.answer :  2  ;        
+    const explanation = req.body && req.body.explanation ? req.body.explanation : "VISIT TESTS FOR TESTS";        
+    const chatId = req.body && req.body.chatId ? req.body.chatId :  TESTING_CHAT_ID  ;        
 
     const parameters = {
-        "chat_id": TESTING_CHAT_ID,
+        "chat_id": chatId, // handle
         "question": question,
         "options": JSON.stringify(options), 
         "is_anonymous": true,
@@ -47,11 +44,10 @@ router.post('/send-poll', async(req, res) => {
                 'Content-Type': 'application/json'
             }
         });
-        console.log("Poll sent successfully.", response.data);
-        res.status(200).json({ success: true, data: response.data }); 
+        res.status(200).json({ success: true,message:"Poll sent successfully", data: response.data }); 
     } catch (error) {
         console.error("Error:", error.message,"API POLL FAILED");
-        res.status(500).json({ success: false, error: error }); 
+        res.status(500).json({ success: false,message:"API POLL FAILED", error: error.message }); 
     }
     
 });

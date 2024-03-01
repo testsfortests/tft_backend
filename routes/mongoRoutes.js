@@ -2,16 +2,18 @@ import DataInfo from '../model/datainfo.js';
 import express from 'express';
 const router = express.Router();
 
+// done
 router.get('/QI', async (req, res) => {
     const subject_name = req.body.subject;
     const sheet_name = req.body.sheet;
     const data = await DataInfo.find({ subject:subject_name,sheet : sheet_name });
     if (!data || data.length === 0) {
-        return res.status(404).json({ error: 'Data not found.' });
+        return res.status(404).json({success:false,message:"'Data not found in DB"});
     }
-    res.json(data);
+    res.status(200).json({success:true, message: 'Data Fetched successfully', data});
 });
 
+//done
 router.post('/QI', async (req, res) => {
     try {
         const { subject, sheet, questionIndex } = req.body;
@@ -47,13 +49,13 @@ router.post('/QI', async (req, res) => {
             await data.save();
         }
 
-        res.status(200).json({status:"success", message: 'Data updated successfully', data });
+        res.status(200).json({success:true, message: 'Data updated successfully', data});
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json({ success: false,message: 'Data not inserted or updated to DB', error: error }); 
     }
 });
 
+//done
 router.delete('/QI', async (req, res) => {
     try {
         const { subject, sheet } = req.body;
@@ -62,13 +64,12 @@ router.delete('/QI', async (req, res) => {
         const data = await DataInfo.findOneAndDelete({ subject, sheet });
 
         if (!data) {
-            return res.status(404).json({ error: 'Data not found.' });
+            return res.status(404).json({success:false, message: 'Data not found.' });
         }
 
-        res.status(200).json({ message: 'Data deleted successfully', data });
+        res.status(200).json({success :true ,message: 'Data deleted successfully', data });
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({success:false,message: 'Error deleting data from DB', error: 'Internal Server Error' });
     }
 });
 
