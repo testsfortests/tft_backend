@@ -19,6 +19,11 @@ const bot = initializeTelegramBot();
 
 app.use(express.json()) 
 
+app.get('/api/cron', (req, res) => {
+    cronJobFunction();
+    res.sendStatus(200);
+});
+
 app.use("/sheet", sheetRoutes)
 app.use("/tele", telegramRoutes)
 app.use("/mongo", mongoRoutes)
