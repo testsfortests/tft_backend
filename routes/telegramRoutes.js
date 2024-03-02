@@ -6,7 +6,10 @@ import { TESTING_CHAT_ID,POLL_URL,SEND_MSG_URL,BASE_URL } from '../config/env.js
 //done
 router.post('/send-message', async (req, res) => {
     try {
-        const message = req.body && req.body.message ? req.body.message : "HELLO, I AM TFTBOT";
+        const { message } = req.body;
+        if(!message){
+          return res.status(500).json({status:false,message: "message is missing" });
+        }
         const chatId = req.body && req.body.chatId ? req.body.chatId :  TESTING_CHAT_ID  ;        
 
         const messageParams = {
@@ -22,9 +25,10 @@ router.post('/send-message', async (req, res) => {
 
 //done
 router.post('/send-poll', async(req, res) => {
-    const question = req.body && req.body.question ? req.body.question :"What is the capital of India?";        
-    const options = req.body && req.body.options ? req.body.options : ["Bombay","New Delhi","Calcutta","Delhi"];        
-    const answer = req.body && req.body.answer ? req.body.answer :  2  ;        
+    const { question,options,answer } = req.body;
+        if(!question || !options || !answer){
+          return res.status(500).json({status:false,message: "question or options or answer are missing" });
+        }
     const explanation = req.body && req.body.explanation ? req.body.explanation : "VISIT TESTS FOR TESTS";        
     const chatId = req.body && req.body.chatId ? req.body.chatId :  TESTING_CHAT_ID  ;        
 
@@ -46,7 +50,6 @@ router.post('/send-poll', async(req, res) => {
         });
         res.status(200).json({ success: true,message:"Poll sent successfully", data: response.data }); 
     } catch (error) {
-        console.error("Error:", error.message,"API POLL FAILED");
         res.status(500).json({ success: false,message:"API POLL FAILED", error: error.message }); 
     }
     

@@ -15,6 +15,7 @@ router.get('/QI', async (req, res) => {
 
 //done
 router.post('/QI', async (req, res) => {
+    console.log("called post qi", req.body)
     try {
         const { subject, sheet, questionIndex } = req.body;
 

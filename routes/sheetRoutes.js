@@ -6,25 +6,40 @@ import { DATA_SPREADSHEET_KEY, DATA_SHEET_NAME, BASE_URL} from '../config/env.js
 
 //done
 router.get('/getAllData', async (req, res) => {
-  const { subject, sheet } = req.body;
-  if(!subject || !sheet){
-    return res.status(500).json({status:false,message: "subject or sheet is missing" });
+  const { subject, sheet, sheetKey } = req.body;
+
+  // Check if subject or sheet is missing
+  if (!subject || !sheet) {
+      return res.status(400).json({ success: false, message: "Subject or sheet is missing" });
   }
   try {
-    const response = await axios.get(`${BASE_URL}sheet/getInfoBySubjectAndSheetName`, {data:{subject,sheet}});
-    if (!response.data.success){
-      return res.status(500).json({status:false,message: "call to getinfo of sheet got failed" });
-    }
-    const data = await getDataFromSheet(response.data.data.sheetKey,sheet+"!A1:Z");
+      let finalSheetKey = sheetKey; // Initialize finalSheetKey with the provided sheetKey
 
-    if(!data){
-      return res.status(500).json({status:false,message: "failed to fetch all data for a sheet" });
-    }
-    res.json({ success: true,message:"Fetched all data successfully" ,data });
+      // If sheetKey is not provided, fetch it first
+      if (!sheetKey) {
+
+          const getInfoResponse = await axios.get(`${BASE_URL}sheet/getInfoBySubjectAndSheetName`, {data : { subject, sheet }});
+
+          if (!getInfoResponse.data.success) {
+              return res.status(500).json({ success: false, message: "Call to getinfo of sheet failed" });
+          }
+
+          finalSheetKey = getInfoResponse.data.data.sheetKey;
+      }
+
+      // Fetch data using the finalSheetKey
+      const data = await getDataFromSheet(finalSheetKey, `${sheet}!A1:Z`);
+
+      if (!data) {
+          return res.status(500).json({ success: false, message: "Failed to fetch all data for the sheet" });
+      }
+
+      res.json({ success: true, message: "Fetched all data successfully", data });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+      res.status(500).json({ success: false, message: error.message });
   }
 });
+
 
 //done
 router.get('/getQData', async (req, res) => {
@@ -32,13 +47,13 @@ router.get('/getQData', async (req, res) => {
     const data = await getDataFromSheet(DATA_SPREADSHEET_KEY,DATA_SHEET_NAME);
     res.json({ success: true, data });
   } catch (error) {
-    console.error('Error in retrieving data from Google Sheet:', error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false,message :'Error in retrieving data from Google Sheet', error: error.message });
   } 
 });
 
 // done
 router.get('/getInfoBySubjectAndSheetName', async (req, res) => {
+
   try {
     // const subject = req.body 
     const subject_name = req.body.subject 
@@ -60,8 +75,7 @@ router.get('/getInfoBySubjectAndSheetName', async (req, res) => {
     } 
     res.json({ success: true,message:"Fetched info for given subject and sheet", data:info });
   } catch (error) {
-    console.error('Error in retrieving data from Google Sheet:', error);
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ success: false,message :'Error in retrieving data from Google Sheet', error: error.message });
   }
 });
 

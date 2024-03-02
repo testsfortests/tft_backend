@@ -1,6 +1,6 @@
 export const PORT=4000
-// export const BASE_URL = 'https://tft-backend.vercel.app/'
-export const BASE_URL = 'http://localhost:4000/'
+export const BASE_URL = 'https://tft-backend.vercel.app/'
+// export const BASE_URL = 'http://localhost:4000/'
 
 export const DATA_SPREADSHEET_KEY="178Jr7nTOk24Iac-f3-OdXz9vWgmLFp1D419B0w00Meg"
 export const DATA_SHEET_NAME="DATA!A1:Z"
