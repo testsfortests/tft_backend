@@ -83,5 +83,7 @@ router.post('/send-poll', async (req, res) => {
     }
 });
 
-
+router.get('/cron',(req,res)=>{
+    res.status(200).end('Hello Cron2!');
+})
 export default router;
