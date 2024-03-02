@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     try {
         console.log("called3")
 
-        const infoResponse = await axios.post(`${BASE_URL}api/send-poll`, {subject :"ENGLISH", sheet :"SHEET2"});
+        const infoResponse = await axios.post(`${BASE_URL}api/send-poll`,{data : {subject :"ENGLISH", sheet :"SHEET2"}});
         console.log("called4")
 
         console.log(infoResponse)
