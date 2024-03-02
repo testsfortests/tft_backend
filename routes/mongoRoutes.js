@@ -15,7 +15,6 @@ router.get('/QI', async (req, res) => {
 
 //done
 router.post('/QI', async (req, res) => {
-    console.log("called post qi", req.body)
     try {
         const { subject, sheet, questionIndex } = req.body;
 
@@ -25,16 +24,25 @@ router.post('/QI', async (req, res) => {
         if (data) {
             // If the document exists, update the questionIndex value
             if (questionIndex !== undefined) {
+                // Set questionIndex
                 data.numbers.questionIndex = questionIndex;
-                
-                // Add questionIndex to generatedNumbers array
-                data.numbers.generatedNumbers.push(questionIndex);
+        
+                // Clear generatedNumbers array if questionIndex is 0
+                if (questionIndex === 0) {
+                    data.numbers.generatedNumbers = [];
+                } else {
+                    // Add questionIndex to generatedNumbers array
+                    data.numbers.generatedNumbers.push(questionIndex);
+                }
             } else {
                 // Increment questionIndex by 1 if not provided
                 data.numbers.questionIndex += 1;
+        
+                // Add questionIndex to generatedNumbers array
                 data.numbers.generatedNumbers.push(data.numbers.questionIndex);
-
             }
+        
+            // Save the document
             await data.save();
         } else {
             // If the document does not exist, create a new one and save it
