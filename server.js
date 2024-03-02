@@ -1,6 +1,6 @@
 import express from "express"
 import cors from "cors"
-import dotenv from "dotenv"
+import dotenv from "dotenv"  // handle
 dotenv.config()
 const app = express()
 app.use(cors())
@@ -11,7 +11,7 @@ import mongoRoutes from "./routes/mongoRoutes.js"
 import sheetRoutes from "./routes/sheetRoutes.js"
 import appRoutes from "./routes/appRoutes.js"
 import { connectToDatabase } from './config/mongodb.js';
-
+import {cronJobFunction} from "./cron-job.js"
 import { PORT } from './config/env.js';
 
 connectToDatabase();
@@ -19,6 +19,11 @@ connectToDatabase();
 const bot = initializeTelegramBot();
 
 app.use(express.json()) 
+
+app.get('/api/cron', (req, res) => {
+    cronJobFunction();
+    res.sendStatus(200);
+});
 
 app.use("/sheet", sheetRoutes)
 app.use("/tele", telegramRoutes)
