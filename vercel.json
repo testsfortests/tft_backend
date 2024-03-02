@@ -2,12 +2,5 @@
     "version": 2,
     "name": "backend",
     "builds": [{ "src": "server.js", "use": "@vercel/node" }],
-    "routes": [{ "src": "/(.*)", "dest": "/server.js" }],
-    "crons": [
-        {
-          "name": "my-cron-job",
-          "schedule": "0 10 * * *", 
-          "command": "node api/cron.js"
-        }
-      ]
+    "routes": [{ "src": "/(.*)", "dest": "/server.js" }]
 }
