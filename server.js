@@ -19,18 +19,13 @@ const bot = initializeTelegramBot();
 
 app.use(express.json()) 
 
-app.get('/api/cron', (req, res) => {
-    cronJobFunction();
-    res.sendStatus(200);
-});
-
 app.use("/sheet", sheetRoutes)
 app.use("/tele", telegramRoutes)
 app.use("/mongo", mongoRoutes)
 app.use("/api", appRoutes)
 
 app.get("/",(req,res)=>{
-    res.send("<h1>Hello World!!!</h1>")
+    res.send("<h1>Hello My World!!!</h1>")
 })
 
 const server = app.listen(PORT, () => {
