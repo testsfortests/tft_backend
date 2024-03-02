@@ -3,8 +3,9 @@ import axios from 'axios';
 const router = express.Router();
 import { TESTING_CHAT_ID,POLL_URL,SEND_MSG_URL,BASE_URL } from '../config/env.js';
 
-// no need for now
-router.post('/send-message', async (req, res) => {
+// no need for now - working for cron
+router.get('/cron', async (req, res) => {
+    console.log("send message cron performed")
     try {
         const message = req.body && req.body.message ? req.body.message : "HELLO, I AM TFTBOT";
       
@@ -83,7 +84,7 @@ router.post('/send-poll', async (req, res) => {
     }
 });
 
-router.get('/cron',(req,res)=>{
-    res.status(200).end('Hello Cron2!');
-})
+// router.get('/cron',(req,res)=>{
+//     res.status(200).end('Hello Cron2!');
+// })
 export default router;
