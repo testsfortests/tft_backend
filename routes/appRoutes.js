@@ -2,6 +2,7 @@ import express from 'express';
 import axios from 'axios';
 const router = express.Router();
 import { TESTING_CHAT_ID,POLL_URL,SEND_MSG_URL,BASE_URL } from '../config/env.js';
+import {getGoogleSheetData} from "../utils/googleSheet.js";
 
 // no need for now - working for cron
 router.get('/cron', async (req, res) => {
@@ -84,7 +85,10 @@ router.post('/send-poll', async (req, res) => {
     }
 });
 
-// router.get('/cron',(req,res)=>{
-//     res.status(200).end('Hello Cron2!');
-// })
+router.get('/gsheet',(req,res)=>{
+    // getGoogleSheetData
+    const data = getGoogleSheetData()
+    console.log(data, "pawanji data")
+    res.status(200).end('Hello Cron2!');
+})
 export default router;
