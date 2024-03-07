@@ -1,6 +1,6 @@
 import { google } from 'googleapis';
 // import axios from 'axios';
-// import credentials from '/etc/secrets/credentials.json' assert { type: 'json' };
+import credentials from '/etc/secrets/credentials.json' assert { type: 'json' };
 // import { SPREADSHEET_KEY,SHEET_SCOPE_URL,API_KEY,SHEET_URL } from '../config/env.js';
 
 
