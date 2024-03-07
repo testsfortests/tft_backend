@@ -97,10 +97,10 @@ router.get('/gsheet', async (req, res) => {
     try {
         const message = req.body && req.body.message ? req.body.message : "HELLO, I AM TFTBOT";
       
-        const messageParams = {
-            chat_id: TESTING_CHAT_ID, 
-            text: message
-        };
+        // const messageParams = {
+        //     chat_id: TESTING_CHAT_ID, 
+        //     text: message
+        // };
         const response = await getGoogleSheetData()
         res.status(200).json({ success: true, message:'Message sent successfull', data: response });
     } catch (error) {

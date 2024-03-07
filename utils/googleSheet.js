@@ -5,7 +5,7 @@ import { SHEET_SCOPE_URL } from '../config/env.js';
 
 const SPREADSHEET_KEY = "14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I";
 
-const RANGE = 'SHEET22!A1:Z'; 
+const RANGE = 'SHEET2!A1:Z'; 
 
 async function getGoogleSheetData() {
   const auth = new google.auth.GoogleAuth({
