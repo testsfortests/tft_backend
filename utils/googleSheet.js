@@ -1,8 +1,9 @@
 import { google } from 'googleapis';
 // import axios from 'axios';
 import credentials from '/etc/secrets/credentials.json' assert { type: 'json' };
-import { SPREADSHEET_KEY,SHEET_SCOPE_URL } from '../config/env.js';
+import { SHEET_SCOPE_URL } from '../config/env.js';
 
+const SPREADSHEET_KEY = "14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I";
 
 const RANGE = 'SHEET22!A1:Z'; 
 
