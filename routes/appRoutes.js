@@ -85,10 +85,26 @@ router.post('/send-poll', async (req, res) => {
     }
 });
 
-router.get('/gsheet',(req,res)=>{
-    // getGoogleSheetData
-    const data = getGoogleSheetData()
-    console.log(data, "pawanji data")
-    res.status(200).end('Hello Cron2!');
-})
+// router.get('/gsheet',(req,res)=>{
+//     // getGoogleSheetData
+//     const data = getGoogleSheetData()
+//     console.log(data, "pawanji data")
+//     res.status(200).end('Hello Cron2!');
+// })
+
+router.get('/gsheet', async (req, res) => {
+    console.log("gsheet performed")
+    try {
+        const message = req.body && req.body.message ? req.body.message : "HELLO, I AM TFTBOT";
+      
+        const messageParams = {
+            chat_id: TESTING_CHAT_ID, 
+            text: message
+        };
+        const response = await getGoogleSheetData()
+        res.status(200).json({ success: true, message:'Message sent successfull', data: response });
+    } catch (error) {
+        res.status(500).json({ success: false,message : 'Error sending message', error: error.message });
+    }
+});
 export default router;
