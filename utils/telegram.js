@@ -1,8 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api';
-import { BOT_TOKEN, SEND_MSG_URL } from '../config/env.js';
 
 export function initializeTelegramBot() {
-    const bot = new TelegramBot(BOT_TOKEN, { polling: true });
+    const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 
     bot.on('message', (msg) => {
         const chatId = msg.chat.id; // admin addition #

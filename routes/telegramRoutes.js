@@ -1,16 +1,17 @@
 import express from 'express';
 import axios from 'axios';
 const router = express.Router();
-import { TESTING_CHAT_ID,POLL_URL,SEND_MSG_URL,BASE_URL } from '../config/env.js';
+import dotenv from "dotenv" 
+dotenv.config()
+import {SEND_MSG_URL,POLL_URL} from "../utils/constants.js"
 
-//done
 router.post('/send-message', async (req, res) => {
     try {
         const { message } = req.body;
         if(!message){
           return res.status(500).json({status:false,message: "message is missing" });
         }
-        const chatId = req.body && req.body.chatId ? req.body.chatId :  TESTING_CHAT_ID  ;        
+        const chatId = req.body && req.body.chatId ? req.body.chatId :  process.env.TESTING_CHAT_ID  ;        
 
         const messageParams = {
             chat_id: chatId, 
@@ -23,14 +24,14 @@ router.post('/send-message', async (req, res) => {
     }
 });
 
-//done
+
 router.post('/send-poll', async(req, res) => {
     const { question,options,answer } = req.body;
         if(!question || !options || !answer){
           return res.status(500).json({status:false,message: "question or options or answer are missing" });
         }
     const explanation = req.body && req.body.explanation ? req.body.explanation : "VISIT TESTS FOR TESTS";        
-    const chatId = req.body && req.body.chatId ? req.body.chatId :  TESTING_CHAT_ID  ;        
+    const chatId = req.body && req.body.chatId ? req.body.chatId :  process.env.TESTING_CHAT_ID  ;        
 
     const parameters = {
         "chat_id": chatId, // handle

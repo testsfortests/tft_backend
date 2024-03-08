@@ -1,35 +1,32 @@
-import axios from 'axios';
-import {API_KEY,generateSheetUrl } from '../config/env.js';
+import { google } from 'googleapis';
+import { SHEET_SCOPE_URL } from '../utils/constants.js';
 
-// done
-async function getDataFromSheet(SPREADSHEET_KEY,SHEET_NAME) {
+async function getGoogleSheetData(SPREADSHEET_KEY, SHEET_NAME) {
+  const RANGE = SHEET_NAME + '!A1:Z';
+
+  const credentialsData = await fs.readFile(process.env.CREDENTIAL_JSON_PATH);
+  const credentials = JSON.parse(credentialsData);
+
+  const auth = new google.auth.GoogleAuth({
+    credentials,
+    scopes: [SHEET_SCOPE_URL],
+  });
+
+  // Create a client instance
+  const sheets = google.sheets({ version: 'v4', auth });
+
   try {
-    const sheet_url = generateSheetUrl(SPREADSHEET_KEY,SHEET_NAME)
-    const response = await axios.get(sheet_url, {
-        params: {
-            key: API_KEY,
-        }
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_KEY,
+      range: RANGE,
     });
-    return response.data; 
+
+    const data = response.data.values;
+    return data;
   } catch (error) {
-    return null
+    console.error('Error fetching data from Google Sheet:', error.message);
+    return error;
   }
 }
 
-// done
-function getInfoBySubjectAndSheetName(data, subject, sheetName) {
-  for (let i = 1; i < data.values.length; i++) {
-      if (data.values[i][0] === subject) {
-          const sheetIndex = data.values[i].indexOf(sheetName);
-          if (sheetIndex !== -1) {
-              const sheetKey = data.values[i][1];
-              const chatId = data.values[i][2];
-              return { sheetKey, chatId };
-          }
-      }
-  }
-  return null; 
-}
-
-// can update data in sheet using googleapis and google-auth-library, but these are not supported by vercel 
-export {getDataFromSheet, getInfoBySubjectAndSheetName};
+export {getGoogleSheetData};

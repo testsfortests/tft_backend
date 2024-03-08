@@ -1,4 +1,6 @@
 import nodemailer from 'nodemailer';
+import dotenv from "dotenv" 
+dotenv.config()
 
 function sendEmail() {
     // Create a transporter object using the default SMTP transport
@@ -7,8 +9,8 @@ function sendEmail() {
         port: 587,
         secure: false, // true for 465, false for other ports
         auth: {
-            user: 'testsfortests@outlook.com',
-            pass: 'TFT@987654321'
+            user: process.env.OUTLOOK_USER,
+            pass:  process.env.OUTLOOK_PASS
         }
     });
 
@@ -33,4 +35,4 @@ function sendEmail() {
 }
 
 // Call the function to send the email
-sendEmail();
+// sendEmail();
