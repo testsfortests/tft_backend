@@ -1,7 +1,7 @@
 import dotenv from "dotenv" 
 dotenv.config()
 
-export const SHEET_SCOPE_URL = 'https://www.googleapis.com/auth/spreadsheets.readonly';
+export const SHEET_SCOPE_URL = 'https://www.googleapis.com/auth/spreadsheets';
 
 export function generateSheetUrl(spreadsheetKey, sheetName) {
     return `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetKey}/values/${sheetName}`;

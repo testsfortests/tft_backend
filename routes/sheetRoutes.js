@@ -1,11 +1,12 @@
 import express from 'express';
-import {getDataFromSheet,getInfoBySubjectAndSheetName} from "../utils/sheet.js";
+import {readCellValue,writeCellValue, getInfoBySubjectAndSheetName} from "../utils/sheet.js";
 const router = express.Router();
 import axios from 'axios';
-import { DATA_SPREADSHEET_KEY, DATA_SHEET_NAME, BASE_URL} from '../config/env.js';
+import dotenv from "dotenv" 
+dotenv.config()
 
-//done
 router.get('/getAllData', async (req, res) => {
+  console.log("Get All Data handler called !!!")
   const { subject, sheet, sheetKey } = req.body;
 
   // Check if subject or sheet is missing
@@ -18,7 +19,7 @@ router.get('/getAllData', async (req, res) => {
       // If sheetKey is not provided, fetch it first
       if (!sheetKey) {
 
-          const getInfoResponse = await axios.get(`${BASE_URL}sheet/getInfoBySubjectAndSheetName`, {data : { subject, sheet }});
+          const getInfoResponse = await axios.get(`${process.env.BASE_URL}sheet/getInfoBySubjectAndSheetName`, {data : { subject, sheet }});
 
           if (!getInfoResponse.data.success) {
               return res.status(500).json({ success: false, message: "Call to getinfo of sheet failed" });
@@ -28,7 +29,7 @@ router.get('/getAllData', async (req, res) => {
       }
 
       // Fetch data using the finalSheetKey
-      const data = await getDataFromSheet(finalSheetKey, `${sheet}!A1:Z`);
+      const data = await readCellValue(finalSheetKey, sheet);
 
       if (!data) {
           return res.status(500).json({ success: false, message: "Failed to fetch all data for the sheet" });
@@ -40,18 +41,15 @@ router.get('/getAllData', async (req, res) => {
   }
 });
 
-
-//done
 router.get('/getQData', async (req, res) => {
   try {
-    const data = await getDataFromSheet(DATA_SPREADSHEET_KEY,DATA_SHEET_NAME);
+    const data = await readCellValue(process.env.DATA_SPREADSHEET_KEY,process.env.DATA_SHEET_NAME);
     res.json({ success: true, data });
   } catch (error) {
     res.status(500).json({ success: false,message :'Error in retrieving data from Google Sheet', error: error.message });
   } 
 });
 
-// done
 router.get('/getInfoBySubjectAndSheetName', async (req, res) => {
 
   try {
@@ -64,12 +62,14 @@ router.get('/getInfoBySubjectAndSheetName', async (req, res) => {
     if (!sheet_name) {
       return res.status(400).json({success:false, message: "Sheet is not provided in the request body" });
     }
-    const data = await getDataFromSheet(DATA_SPREADSHEET_KEY,DATA_SHEET_NAME);
+
+    const data = await readCellValue(process.env.DATA_SPREADSHEET_KEY,process.env.DATA_SHEET_NAME);
     if(!data){
       return res.status(400).json({success:false, message: "Data sheet didn't get access" });
     }
 
     const info = getInfoBySubjectAndSheetName(data, subject_name, sheet_name);
+    
     if (!info) {
       return res.status(400).json({success:false, message: "Data not found for given subject and sheet" });
     } 
@@ -78,5 +78,6 @@ router.get('/getInfoBySubjectAndSheetName', async (req, res) => {
     res.status(500).json({ success: false,message :'Error in retrieving data from Google Sheet', error: error.message });
   }
 });
+
 
 export default router;

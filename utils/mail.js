@@ -2,11 +2,11 @@ import nodemailer from 'nodemailer';
 import dotenv from "dotenv" 
 dotenv.config()
 
-function sendEmail() {
+function sendEmail(send_to,subject,message) {
     // Create a transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
-        host: 'smtp.office365.com',
-        port: 587,
+        host:process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
         secure: false, // true for 465, false for other ports
         auth: {
             user: process.env.OUTLOOK_USER,
@@ -16,11 +16,11 @@ function sendEmail() {
 
     // Setup email data with unicode symbols
     const mailOptions = {
-        from: 'testsfortests@outlook.com', // sender address
-        to: 'pawanmtr123456789@gmail.com', // list of receivers
-        subject: 'Test Email from Nodemailer', // Subject line
-        text: 'Hello world!', // plain text body
-        html: '<b>Hello world!</b>' // html body
+        from: process.env.OUTLOOK_USER, // sender address
+        to: send_to, // list of receivers
+        subject: subject, // Subject line
+        text: message, // plain text body
+        // html: '<b>Hello world!</b>' // html body
     };
 
     // Send mail with defined transport object
@@ -35,4 +35,4 @@ function sendEmail() {
 }
 
 // Call the function to send the email
-// sendEmail();
+// sendEmail("pawanmtr123456789@gmail.com","testing subject","hii hello");
