@@ -9,6 +9,7 @@ app.use(cors())
 
 import telegramRoutes from "./routes/telegramRoutes.js"
 import sheetRoutes from "./routes/sheetRoutes.js"
+import serviceRoute from "./routes/serviceRoute.js"
 import testRoutes from "./routes/testRoutes.js"
 import appRoutes from "./routes/appRoutes.js"
 
@@ -17,9 +18,11 @@ import appRoutes from "./routes/appRoutes.js"
 // const bot = initializeTelegramBot();
 
 app.use(express.json()) 
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/sheet", sheetRoutes)
 app.use("/tele", telegramRoutes)
+app.use("/service", serviceRoute)
 app.use("/test", testRoutes)
 
 app.use("/api", appRoutes)
