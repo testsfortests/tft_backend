@@ -3,6 +3,7 @@ import {readCellValue,writeCellValue, getInfoBySubjectAndSheetName} from "../uti
 const router = express.Router();
 import axios from 'axios';
 import dotenv from "dotenv" 
+import { callbackPromise } from 'nodemailer/lib/shared/index.js';
 dotenv.config()
 
 router.get('/getAllData', async (req, res) => {
@@ -28,11 +29,9 @@ router.get('/getAllData', async (req, res) => {
           finalSheetKey = getInfoResponse.data.data.sheetKey;
       }
 
-      // Fetch data using the finalSheetKey
       const data = await readCellValue(finalSheetKey, sheet);
-
-      if (!data) {
-          return res.status(500).json({ success: false, message: "Failed to fetch all data for the sheet" });
+      if (!data || (Array.isArray(data) && data.length === 0))  {        
+          return res.json({ success: false, message: "Failed to fetch all data for the sheet" });
       }
 
       res.json({ success: true, message: "Fetched all data successfully", data });

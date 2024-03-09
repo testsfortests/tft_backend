@@ -1,111 +1,73 @@
 import express from 'express';
-// import axios from 'axios';
+import axios from 'axios';
 const router = express.Router();
-// import { TESTING_CHAT_ID,POLL_URL,SEND_MSG_URL,BASE_URL } from '../config/env.js';
-// import {getGoogleSheetData} from "../utils/googleSheet.js";
+import {getInfoBySubjectAndSheetName, writeCellValue} from "../utils/sheet.js"
 
-// // no need for now - working for cron
-// router.get('/cron', async (req, res) => {
-//     console.log("send message cron performed")
-//     try {
-//         const message = req.body && req.body.message ? req.body.message : "HELLO, I AM TFTBOT";
-      
-//         const messageParams = {
-//             chat_id: TESTING_CHAT_ID, 
-//             text: message
-//         };
-//         const response = await axios.post(SEND_MSG_URL, messageParams);
-//         res.status(200).json({ success: true, message:'Message sent successfull', data: response.data });
-//     } catch (error) {
-//         res.status(500).json({ success: false,message : 'Error sending message', error: error.message });
-//     }
-// });
+router.get('/send', async (req, res) => {
+    console.log("API MAIN FUNC CALLED!!!")
+    try {
+        const getInfoResponse = await axios.get(`${process.env.BASE_URL}sheet/getQData`);
+        const data = getInfoResponse.data.data
+        for (let i = 1; i<data.length; i++) {
+          const [subject, sheetKey, chatId, ...sheets] = data[i];
+          const numberOfPairs = sheets.length / 2;
 
+          const today = new Date();
+          const utcTime = today.getTime();
+          const istOffset = 5.5 * 60 * 60 * 1000; 
+          const istTime = new Date(utcTime + istOffset);
+          const day = istTime.getDate();
+          const remainder = day % numberOfPairs;
 
-// router.post('/send-poll', async (req, res) => {
-//     const { subject, sheet } = req.body;
+          const selectedSheetIndex = remainder * 2;
+          const sheet = sheets[selectedSheetIndex];
+          // const sheet = "SHEET2"
+          const info = getInfoBySubjectAndSheetName(data,subject,sheet)
+          if (info === null) {
+            console.error(`Info not found for subject ${subject} and sheet ${sheet}`);
+            continue; 
+          }
 
-//     try {
-//         const infoResponse = await axios.get(`${BASE_URL}sheet/getInfoBySubjectAndSheetName`, {data : { subject, sheet }});
+          let { qIndex, qCell } = info;
+          qIndex = parseInt(qIndex, 10); 
+          qIndex += 1
 
-//         if (!infoResponse.data.success) {
-//             return res.status(500).json({ success: false, message: "Call to getinfo of sheet failed" });
-//         }
-//         const sheetKey = infoResponse.data.data.sheetKey;
-//         const chatId = infoResponse.data.data.chatId;
+          const getAllData = await axios.get(`${process.env.BASE_URL}sheet/getAllData`,{data :{subject,sheet,sheetKey}});
+          if (!getAllData || !getAllData.data || !getAllData.data.success){
+            console.error(`Data not found for subject ${subject} and sheet ${sheet}`);
+            continue;
+          }
+          const responseData = getAllData.data.data;
+          if (responseData.length == qIndex){
+              qIndex = 1
+          }
+          let queData = responseData[qIndex];
 
-//         // Fetch data from the sheet using sheetKey and subject
-//         const dataResponse = await axios.get(`${BASE_URL}sheet/getAllData`, { data: { subject, sheet,sheetKey } });
-
-//         if (!dataResponse || !dataResponse.data.success) {
-//             return res.status(500).json({ success: false, message: `Failed to fetch data from the sheet ${dataResponse.message}` });
-//         }
-
-//         const qiResponse = await axios.get(`${BASE_URL}mongo/QI`,{data : { subject, sheet }});
-
-//         if (!qiResponse.data.success) {
-//             return res.status(500).json({ success: false, message: "Failed to fetch question index" });
-//         }
-
-//         let questionIndex = qiResponse.data.data[0].numbers.questionIndex + 1;
-
-//         // Use questionIndex to get the question, options, answer, and explanation from the data
-//         let questionData = dataResponse.data.data.values[questionIndex]; // Assuming data is an array of questions
-
-//         // Check if any of the required elements are missing or empty
-//         while (questionData.length < 6 || !questionData[0] || !questionData[1] || !questionData[2] || !questionData[3] || !questionData[4] || !questionData[5]) {
-//             questionIndex = questionIndex + 1
-//             questionData = dataResponse.data.data.values[questionIndex]; 
-//         }
-//         const question = questionData[0];
-//         const options = questionData.slice(1,5);
-//         const answer = questionData[5];
-//         const explanation = questionData[6] || undefined;
-
-//         // Send poll using retrieved data
-//         const parameters = {
-//             "chat_id": TESTING_CHAT_ID,
-//             "question": question,
-//             "options": JSON.stringify(options),
-//             "is_anonymous": true,
-//             "correct_option_id": answer - 1,
-//             "explanation": explanation,
-//             "type": "quiz"
-//         };
-//         const pollResponse = await axios.post(POLL_URL, parameters, { headers: { 'Content-Type': 'application/json' } });
+          while (queData && queData.length < 6 && queData.slice(0, 6).every(item => item !== undefined && item !== null && item !== '')) {
+            qIndex += 1;
+            queData = responseData[qIndex];
+          }
         
-//         const postQIResponse = await axios.post(`${BASE_URL}mongo/QI`,{ subject, sheet, questionIndex });
-        
-//         if (!postQIResponse.data.success) {
-//             return res.status(500).json({ success: false, message: "Failed to post question index" });
-//         }
-//         res.status(200).json({ success: true,message:"Poll sent successfully", data: pollResponse.data });
-//     } catch (error) {
-//         res.status(500).json({ success: false,message:"Failed while sending the Poll" ,error: error });
-//     }
-// });
+          const question = queData[0]
+          const options = queData.slice(1,5)
+          const answer = queData[5]
 
-// // router.get('/gsheet',(req,res)=>{
-// //     // getGoogleSheetData
-// //     const data = getGoogleSheetData()
-// //     console.log(data, "pawanji data")
-// //     res.status(200).end('Hello Cron2!');
-// // })
+          const teleResponse = await axios.post(`${process.env.BASE_URL}tele/send-poll`,{question,options,answer,chatId});
+          if (!teleResponse && !teleResponse.data && !teleResponse.data.success){
+            console.error(`Telegram Failed to send poll!`);
+            continue;
+          }          
+          const haveWritten = await writeCellValue(process.env.DATA_SPREADSHEET_KEY,process.env.DATA_SHEET_NAME,qCell,qIndex)
+          if (!haveWritten){
+            console.error(`Not written to the cell SHEET - ${sheet}, CELL - ${qCell}, VALUE - ${qIndex}`);
+            continue;
+          }
+        }
+        res.json({ success: true, message:"API MAIN EXECUTED SUCCESSFULLY" });
 
-// router.get('/gsheet', async (req, res) => {
-//     console.log("gsheet performed")
-//     try {
-//         const message = req.body && req.body.message ? req.body.message : "HELLO, I AM TFTBOT";
-      
-//         // const messageParams = {
-//         //     chat_id: TESTING_CHAT_ID, 
-//         //     text: message
-//         // };
-//         const response = await getGoogleSheetData()
-//         res.status(200).json({ success: true, message:'Message sent successfull', data: response });
-//     } catch (error) {
-//         res.status(500).json({ success: false,message : 'Error sending message', error: error.message });
-//     }
-// });
+    } catch (error) {
+      res.status(500).json({ success: false,message :'Error in sending full poll', error: error.message });
+    }
+  });
 
 export default router;

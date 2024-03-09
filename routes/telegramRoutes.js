@@ -26,15 +26,20 @@ router.post('/send-message', async (req, res) => {
 
 
 router.post('/send-poll', async(req, res) => {
-    const { question,options,answer } = req.body;
+    let { question,options,answer } = req.body;
         if(!question || !options || !answer){
           return res.status(500).json({status:false,message: "question or options or answer are missing" });
         }
     const explanation = req.body && req.body.explanation ? req.body.explanation : "VISIT TESTS FOR TESTS";        
     const chatId = req.body && req.body.chatId ? req.body.chatId :  process.env.TESTING_CHAT_ID  ;        
 
+    if (question.length >= 300){
+        const response = await axios.post(`${process.env.BASE_URL}tele/send-message`,{message :question});
+        question = "CHOOSE : "
+    }
+
     const parameters = {
-        "chat_id": chatId, // handle
+        "chat_id": process.env.TESTING_CHAT_ID, // handle
         "question": question,
         "options": JSON.stringify(options), 
         "is_anonymous": true,

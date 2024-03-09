@@ -12,9 +12,9 @@ import sheetRoutes from "./routes/sheetRoutes.js"
 import testRoutes from "./routes/testRoutes.js"
 import appRoutes from "./routes/appRoutes.js"
 
-// import { initializeTelegramBot } from './utils/telegram.js';
+import { initializeTelegramBot } from './utils/telegram.js';
 
-// const bot = initializeTelegramBot();
+const bot = initializeTelegramBot();
 
 app.use(express.json()) 
 

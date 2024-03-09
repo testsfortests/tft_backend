@@ -3,7 +3,6 @@ import { SHEET_SCOPE_URL } from '../utils/constants.js';
 import fs from 'fs/promises';
 
 async function readCellValue(SPREADSHEET_KEY, SHEET_NAME, CELL = "A1:Z") {
-
   const credentialsData = await fs.readFile(process.env.CREDENTIAL_JSON_PATH);
   const credentials = JSON.parse(credentialsData);
 
@@ -22,10 +21,14 @@ async function readCellValue(SPREADSHEET_KEY, SHEET_NAME, CELL = "A1:Z") {
     });
 
     const data = response.data.values;
+    if (!data || data.length === 0) {
+      console.log('Sheet is empty.');
+      return [];
+    }
     return data;
   } catch (error) {
-    console.error('Error fetching data from Google Sheet:', error.message);
-    return error;
+      console.error('SHEET is not available', error.message);
+      return [];
   }
 }
 
@@ -71,11 +74,26 @@ function getInfoBySubjectAndSheetName(data, subject, sheetName) {
               const sheetKey = data[i][1];
               const chatId = data[i][2];
               const qIndex = data[i][sheetIndex+1]
-              return { sheetKey, chatId , qIndex};
+              const qCell = getColumnLetter(sheetIndex + 1) + (i + 1);;
+              return { sheetKey, chatId , qIndex, qCell} ;
           }
       }
   }
   return null; 
+}
+
+function getColumnLetter(columnIndex) {
+  let dividend = columnIndex + 1;
+  let columnLetter = '';
+  let modulo;
+
+  while (dividend > 0) {
+      modulo = (dividend - 1) % 26;
+      columnLetter = String.fromCharCode(65 + modulo) + columnLetter;
+      dividend = Math.floor((dividend - modulo) / 26);
+  }
+
+  return columnLetter;
 }
 
 export { readCellValue, writeCellValue, getInfoBySubjectAndSheetName};
