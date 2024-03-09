@@ -1,9 +1,15 @@
 import express from 'express';
 import axios from 'axios';
+import fs from 'fs';
+import path from 'path';
 const router = express.Router();
+import FormData from 'form-data'
+import {upload} from "../utils/multer.js"
+
 import dotenv from "dotenv" 
 dotenv.config()
-import {SEND_MSG_URL,POLL_URL} from "../utils/constants.js"
+
+import {SEND_MSG_URL,POLL_URL, SEND_FILE_URL} from "../utils/constants.js"
 
 router.post('/send-message', async (req, res) => {
     try {
@@ -60,5 +66,45 @@ router.post('/send-poll', async(req, res) => {
     }
     
 });
+
+router.post('/send-file',upload.single('file'), async (req, res) => {
+    try {
+        // Check if a file path was provided in the request
+        if (!req.file) {
+            return res.status(400).send('No file was uploaded.');
+        }
+        const filePath = req.file.path;         
+        const fileStream = fs.createReadStream(filePath);
+
+        // Prepare the parameters for sending the file to Telegram
+        const chatId = req.body.chatId || process.env.TESTING_CHAT_ID;
+        const caption = req.body.caption || 'File from TFT_BOT';
+
+        // Create a FormData object to construct the request body
+        const formData = new FormData();
+        formData.append('chat_id', chatId);
+        formData.append('caption', caption);
+        formData.append('document', fileStream, { filename: path.basename(filePath) }); // Adjust the filename and extension accordingly
+
+        // Send a POST request to the Telegram Bot API endpoint
+        const response = await axios.post(SEND_FILE_URL, formData, {
+            headers: {
+                ...formData.getHeaders(),
+            },
+        });
+
+        fs.unlinkSync(filePath);
+        // Check if the message was sent successfully
+        if (response.status === 200 && response.data.ok) {
+            return res.status(200).json({ success: true, message: 'File sent successfully.', data: response.data });
+        } else {
+            return res.status(500).json({ success: false, message: 'Failed to send file to Telegram.', error: response.data });
+        }
+    } catch (error) {
+        console.error('Error sending file to Telegram:', error);
+        return res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+});
+
 
 export default router;
