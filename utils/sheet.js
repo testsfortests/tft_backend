@@ -12,6 +12,7 @@ async function readCellValue(SPREADSHEET_KEY, SHEET_NAME, CELL = "A1:Z") {
   });
 
   // Create a client instance
+  console.log("test200",`${SHEET_NAME}!${CELL}`)
   const sheets = google.sheets({ version: 'v4', auth });
 
   try {
