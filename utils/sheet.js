@@ -20,7 +20,9 @@ async function readCellValue(SPREADSHEET_KEY, SHEET_NAME, CELL = "A1:Z") {
       range: `${SHEET_NAME}!${CELL}`,
     });
 
+    console.log("test201",response)
     const data = response.data.values;
+
     if (!data || data.length === 0) {
       console.log('Sheet is empty.');
       return [];

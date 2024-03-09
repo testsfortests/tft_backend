@@ -16,7 +16,6 @@ router.get('/cron', async (req, res) => {
             chat_id: chatId, 
             text: message
         };
-        console.log("test",SEND_MSG_URL,chatId,messageParams)
         const response = await axios.post(SEND_MSG_URL, messageParams);
 
         res.status(200).json({ success: true,message:'Message sent successfully', data: response.data });
