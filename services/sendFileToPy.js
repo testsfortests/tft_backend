@@ -1,23 +1,21 @@
-const axios = require('axios');
-const FormData = require('form-data');
-const fs = require('fs');
+import axios from 'axios';
+import fs from 'fs'
+import FormData from 'form-data'
 
-// Function to send audio and image files using Axios
-async function sendFiles() {
+async function sendFiles(filePaths) {
     const formData = new FormData();
 
-    // Add audio file
-    const audioFilePath = 'path_to_your_audio_file'; // Update with the path to your audio file
-    const audioFile = fs.createReadStream(audioFilePath);
-    formData.append('audio', audioFile);
-
-    // Add image file
-    const imageFilePath = 'path_to_your_image_file'; // Update with the path to your image file
-    const imageFile = fs.createReadStream(imageFilePath);
-    formData.append('image', imageFile);
-
     try {
-        const response = await axios.post('your_api_endpoint', formData, {
+        // Iterate over the file paths array
+        for (const filePath of filePaths) {
+            const fileStream = fs.createReadStream(filePath);
+            // Extract file name from the path
+            const fileName = filePath.split('/').pop();
+            // Append file to FormData object with a dynamic field name
+            formData.append(fileName, fileStream);
+        }
+
+        const response = await axios.post(`${BASE_URL_PY}upload/`, formData, {
             headers: {
                 ...formData.getHeaders(), // Include headers from FormData object
                 // Add any additional headers if needed
@@ -30,5 +28,12 @@ async function sendFiles() {
     }
 }
 
-// Call the function to send files
-sendFiles();
+// Example usage: Send 5 files in one go with paths
+const filePaths = [
+    './resource/image/image_que.png',
+    './resource/image/image_ans.png',
+    './resource/image/music_que.png',
+    './resource/image/music_ans.png',   
+];
+
+sendFiles(filePaths);

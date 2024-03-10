@@ -67,24 +67,28 @@ router.post('/send-poll', async(req, res) => {
     
 });
 
-router.post('/send-file',upload.single('file'), async (req, res) => {
+router.post('/send-files', upload.array('files', 5), async (req, res) => {
     try {
-        // Check if a file path was provided in the request
-        if (!req.file) {
-            return res.status(400).send('No file was uploaded.');
+        // Check if files were uploaded
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).send('No files were uploaded.');
         }
-        const filePath = req.file.path;         
-        const fileStream = fs.createReadStream(filePath);
 
-        // Prepare the parameters for sending the file to Telegram
+        const files = req.files;
         const chatId = req.body.chatId || process.env.TESTING_CHAT_ID;
-        const caption = req.body.caption || 'File from TFT_BOT';
-
-        // Create a FormData object to construct the request body
+        const caption = req.body.caption || 'Files from TFT_BOT';
         const formData = new FormData();
+
+        // Iterate through each file and append it to FormData
+        files.forEach((file, index) => {
+            const filePath = file.path;
+            const fileStream = fs.createReadStream(filePath);
+            formData.append(`document${index}`, fileStream, { filename: path.basename(filePath) });
+        });
+
+        // Append common parameters to the FormData object
         formData.append('chat_id', chatId);
         formData.append('caption', caption);
-        formData.append('document', fileStream, { filename: path.basename(filePath) }); // Adjust the filename and extension accordingly
 
         // Send a POST request to the Telegram Bot API endpoint
         const response = await axios.post(SEND_FILE_URL, formData, {
@@ -93,15 +97,17 @@ router.post('/send-file',upload.single('file'), async (req, res) => {
             },
         });
 
-        fs.unlinkSync(filePath);
+        // Clean up uploaded files
+        files.forEach(file => fs.unlinkSync(file.path));
+
         // Check if the message was sent successfully
         if (response.status === 200 && response.data.ok) {
-            return res.status(200).json({ success: true, message: 'File sent successfully.', data: response.data });
+            return res.status(200).json({ success: true, message: 'Files sent successfully.', data: response.data });
         } else {
-            return res.status(500).json({ success: false, message: 'Failed to send file to Telegram.', error: response.data });
+            return res.status(500).json({ success: false, message: 'Failed to send files to Telegram.', error: response.data });
         }
     } catch (error) {
-        console.error('Error sending file to Telegram:', error);
+        console.error('Error sending files to Telegram:', error);
         return res.status(500).json({ success: false, message: 'Internal server error.' });
     }
 });
