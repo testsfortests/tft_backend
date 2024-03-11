@@ -259,7 +259,7 @@ function createAnswerImage(question, options, ans) {
     
     let alpha = ["a","b","c","d"]
     for (let option of options) {
-        const isCorrectAnswer = num === ans;
+        const isCorrectAnswer = num == ans;
         let lines = option.split('\n');
         ctx.fillText(`(${alpha[num-1]}). ` , x_cord-2, y_cord);
     
@@ -374,3 +374,5 @@ function createAnswerImage(question, options, ans) {
 
 // createQuestionImage(question, options, answer);
 // createAnswerImage(question, options, answer);
+
+export {createQuestionImage,createAnswerImage}

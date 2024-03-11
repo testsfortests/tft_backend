@@ -2,6 +2,9 @@ import express from 'express';
 import axios from 'axios';
 const router = express.Router();
 import {getInfoBySubjectAndSheetName, writeCellValue} from "../utils/sheet.js"
+import { createQuestionImage,createAnswerImage } from '../services/image.js';
+import { createMusic } from '../services/music.js';
+import { deleteFiles, sendFiles } from '../services/sendFileToPy.js';
 
 router.get('/send', async (req, res) => {
     console.log("API MAIN FUNC CALLED!!!")
@@ -62,6 +65,13 @@ router.get('/send', async (req, res) => {
             console.error(`Not written to the cell SHEET - ${sheet}, CELL - ${qCell}, VALUE - ${qIndex}`);
             continue;
           }
+          // TODO 
+          deleteFiles()
+          createQuestionImage(question,options,answer)
+          createAnswerImage(question,options,answer)
+          await createMusic(question,options,answer)
+          await sendFiles()
+          deleteFiles()
         }
         res.json({ success: true, message:"API MAIN EXECUTED SUCCESSFULLY" });
 
@@ -71,3 +81,5 @@ router.get('/send', async (req, res) => {
   });
 
 export default router;
+
+

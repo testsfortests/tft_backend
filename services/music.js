@@ -3,36 +3,46 @@ import gtts from "gtts";
 // const num1 = ["first","second","third","fourth"]
 const num2 = ["a","b","c","d"]
 
-function createMusic(question, options, ans) {    
-    let text1 = "The problem of the day is: " + question + "\n\nOptions are:\n";
-    options.forEach((option, index) => {
-        text1 += `${num2[index]}. ${option}\n`;
+// Function to convert text to speech and save to MP3 file using async/await
+async function saveToMP3Async(text, filename) {
+    return new Promise((resolve, reject) => {
+        const tts = new gtts(text, 'en');
+        tts.save(filename, function(err, result) {
+            if (err) {
+                reject(err); // Reject promise if there's an error
+            } else {
+                console.log(`Speech saved to ${filename}`);
+                resolve(); // Resolve promise if saving is successful
+            }
+        });
     });
-    
-    let text2 = `\nThe correct answer is : ${num2[ans-1]} that is ${options[ans-1]}`;
-    
-    // Create gTTS instance and save to MP3 file
-    const tts1 = new gtts(text1, 'en'); // 'hi' for Hindi language
-    tts1.save('./resource/music/music_que.mp3', function(err, result) {
-        if (err) {
-            console.error('Error converting text to speech:', err);
-        } else {
-            console.log('Speech saved to output.mp3');
-        }
-    });
-
-    const tts2 = new gtts(text2, 'en'); // 'hi' for Hindi language
-    tts2.save('./resource/music/music_ans.mp3', function(err, result) {
-        if (err) {
-            console.error('Error converting text to speech:', err);
-        } else {
-            console.log('Speech saved to output.mp3');
-        }
-    });
-
 }
 
-// Example
+// Function to create music files for the question and answer
+async function createMusic(question, options, ans) {
+    try {
+        // Construct text for the question
+        let text1 = `The problem of the day is: ${question}\n\nOptions are:\n`;
+        options.forEach((option, index) => {
+            text1 += `${num2[index]}. ${option}\n`;
+        });
+
+        // Construct text for the answer
+        let text2 = `\nThe correct answer is: ${num2[ans-1]} that is ${options[ans - 1]}`;
+
+        // Save question and answer to MP3 files using async/await
+        await saveToMP3Async(text1, './resource/music/music_que.mp3');
+        await saveToMP3Async(text2, './resource/music/music_ans.mp3');
+
+        console.log('Music files created successfully.');
+    } catch (error) {
+        console.error('Error creating music files:', error);
+    }
+}
+
+
+
+// // Example
 // const question = `Which of the following activities is part of India's GDP? 
 // 1. Activities in Indian embassies and consulates in other countries 
 // 2. Air India services between two different countries 
@@ -47,7 +57,9 @@ function createMusic(question, options, ans) {
 //     "3 & 4 only",
 //     "All of the above"
 // ];
-// const answer = 3;
+// const answer = "3";
 
 
-// createMusic(question,options,answer)
+// await createMusic(question,options,answer)
+
+export {createMusic};
