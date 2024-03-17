@@ -70,6 +70,7 @@ router.post('/send-poll', async(req, res) => {
 router.post('/send-file',upload.single('file'), async (req, res) => {
     try {
         // Check if a file path was provided in the request
+        console.log("TELE SEND-FILE ENDPOINT CALLED !")
         if (!req.file) {
             return res.status(400).send('No file was uploaded.');
         }
