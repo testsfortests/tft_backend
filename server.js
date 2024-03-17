@@ -54,22 +54,19 @@ app.get('/', (req, res) => {
 
 app.get('/start', (req, res) => {
     let deviceId = req.cookies.deviceId;
-    const userAgent = req.headers['user-agent'];
-    const ipAddress = req.ip; // Get the IP address of the client
 
     // If deviceId cookie doesn't exist, generate a new one
     if (!deviceId) {
-        deviceId = generateDeviceId(ipAddress);
-        res.cookie('deviceIdU', deviceId, { maxAge: 365 * 24 * 60 * 60 * 1000 }); // Set cookie to expire in 1 year
+        deviceId = generateDeviceId();
+        res.cookie('deviceId', deviceId, { maxAge: 365 * 24 * 60 * 60 * 1000 }); // Set cookie to expire in 1 year
     }
-    console.log(`The device Id is ${deviceId} and the Ip Address is ${ipAddress}`)
-    res.send(`Device ID: ${deviceId}`);
-});
 
-// Function to generate a device ID based on IP address
-function generateDeviceId(ipAddress) {
-    // Generate a unique ID based on IP address
-    return ipAddress.replace(/^.*:/, ''); // Extract the IPv6 part of the IP address
+    res.send(`Device ID: ${deviceId}`);
+  });
+
+function generateDeviceId() {
+    // Generate a random alphanumeric string
+    return Math.random().toString(36).substr(2, 10);
 }
 
 const PORT = process.env.PORT || 3000;
