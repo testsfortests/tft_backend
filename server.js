@@ -1,11 +1,13 @@
 import express from "express"
 import cors from "cors"
+import cookieParser from 'cookie-parser';
 
 import dotenv from "dotenv" 
 dotenv.config()
 
 const app = express()
 app.use(cors())
+app.use(cookieParser());
 
 import telegramRoutes from "./routes/telegramRoutes.js"
 import sheetRoutes from "./routes/sheetRoutes.js"
@@ -50,6 +52,25 @@ app.get('/', (req, res) => {
     res.send(htmlContent);
 });
 
+app.get('/start', (req, res) => {
+    let deviceId = req.cookies.deviceId;
+    const userAgent = req.headers['user-agent'];
+    const ipAddress = req.ip; // Get the IP address of the client
+
+    // If deviceId cookie doesn't exist, generate a new one
+    if (!deviceId) {
+        deviceId = generateDeviceId(ipAddress);
+        res.cookie('deviceIdU', deviceId, { maxAge: 365 * 24 * 60 * 60 * 1000 }); // Set cookie to expire in 1 year
+    }
+    console.log(`The device Id is ${deviceId} and the Ip Address is ${ipAddress}`)
+    res.send(`Device ID: ${deviceId}`);
+});
+
+// Function to generate a device ID based on IP address
+function generateDeviceId(ipAddress) {
+    // Generate a unique ID based on IP address
+    return ipAddress.replace(/^.*:/, ''); // Extract the IPv6 part of the IP address
+}
 
 const PORT = process.env.PORT || 3000;
 
