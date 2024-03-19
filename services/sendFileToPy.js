@@ -13,10 +13,10 @@ const filePaths = [
 ];
 
 async function sendFiles() {
+    console.log("SEND FILES TO PA CALLED!")
     const formData = new FormData();
 
     try {
-        console.log("hiii")
 
         // Iterate over the file paths array
         for (const filePath of filePaths) {
@@ -32,7 +32,7 @@ async function sendFiles() {
 
         }
 
-        const response = await axios.post(`${process.env.BASE_URL_PY}upload/`, formData, {
+        const response = await axios.post(`${process.env.BASE_URL_PA}upload/`, formData, {
             headers: {
                 ...formData.getHeaders(), // Include headers from FormData object
                 // Add any additional headers if needed
@@ -46,19 +46,17 @@ async function sendFiles() {
 }
 
 // Function to delete files
-function deleteFiles() {
-    // Iterate over the array of file paths
-    filePaths.forEach(filePath => {
-        // Use fs.unlink to delete the file
-        fs.unlink(filePath, (err) => {
-            if (err) {
-                console.error(`Error deleting file ${filePath}:`, err);
-                return;
-            }
+async function deleteFiles() {
+    try {
+        for (const filePath of filePaths) {
+            await fs.promises.unlink(filePath);
             console.log(`File ${filePath} deleted successfully`);
-        });
-    });
+        }
+    } catch (error) {
+        console.error('Error deleting files:', error);
+    }
 }
+
 
 
 // sendFiles(filePaths);

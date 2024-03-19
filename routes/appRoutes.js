@@ -11,7 +11,8 @@ router.get('/send', async (req, res) => {
     try {
         const getInfoResponse = await axios.get(`${process.env.BASE_URL}sheet/getQData`);
         const data = getInfoResponse.data.data
-        for (let i = 1; i<data.length; i++) {
+        // data.length
+        for (let i = 1; i<=1; i++) {
           const [subject, sheetKey, chatId, ...sheets] = data[i];
           const numberOfPairs = sheets.length / 2;
 
@@ -25,6 +26,7 @@ router.get('/send', async (req, res) => {
           const selectedSheetIndex = remainder * 2;
           const sheet = sheets[selectedSheetIndex];
           // const sheet = "SHEET2"
+
           const info = getInfoBySubjectAndSheetName(data,subject,sheet)
           if (info === null) {
             console.error(`Info not found for subject ${subject} and sheet ${sheet}`);
@@ -46,9 +48,16 @@ router.get('/send', async (req, res) => {
           }
           let queData = responseData[qIndex];
 
-          while (queData && queData.length < 6 && queData.slice(0, 6).every(item => item !== undefined && item !== null && item !== '')) {
+          while (queData.length < 6 || (queData.length>=6 && (queData[0]==='' || queData[1]==='' || queData[2]==='' || queData[3]==='' || queData[4]==='' || queData[5]===''))) {
+            if (responseData.length == qIndex){
+              break;
+            }
             qIndex += 1;
             queData = responseData[qIndex];
+          }
+
+          if (responseData.length == qIndex){
+            break;
           }
         
           const question = queData[0]
@@ -62,21 +71,26 @@ router.get('/send', async (req, res) => {
           }          
           const haveWritten = await writeCellValue(process.env.DATA_SPREADSHEET_KEY,process.env.DATA_SHEET_NAME,qCell,qIndex)
           if (!haveWritten){
-            console.error(`Not written to the cell SHEET - ${sheet}, CELL - ${qCell}, VALUE - ${qIndex}`);
-            continue;
+          console.error(`Not written to the cell SHEET - ${sheet}, CELL - ${qCell}, VALUE - ${qIndex}`);
+          continue;
           }
           // TODO 
-          deleteFiles()
-          createQuestionImage(question,options,answer)
-          createAnswerImage(question,options,answer)
+          await deleteFiles()
+          // createQuestionImage(question,options,answer)
+          await Promise.all([
+            createQuestionImage(question, options, answer),
+            createAnswerImage(question, options, answer)
+            ]);
+
+          // createAnswerImage(question,options,answer)
           await createMusic(question,options,answer)
           await sendFiles()
-          deleteFiles()
+          // await deleteFiles()
         }
         res.json({ success: true, message:"API MAIN EXECUTED SUCCESSFULLY" });
 
     } catch (error) {
-      res.status(500).json({ success: false,message :'Error in sending full poll', error: error.message });
+      res.status(500).json({ success: false,message :'Error in sending full poll', error: error });
     }
   });
 

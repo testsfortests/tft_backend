@@ -1,18 +1,19 @@
 import fs from 'fs';
 import { createCanvas } from 'canvas';
 
-function createQuestionImage(question, options, ans) {    
-    const img_width = 1080;
-    const img_height = 1920;
-    
-    const canvas = createCanvas(img_width, img_height);
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'; // White background
-    ctx.fillRect(0, 0, img_width, img_height);
-    
-    let x_cord = 50;
-    let y_cord = 60;
-    const line_height = 60
+async function createQuestionImage(question, options, ans) {
+    return new Promise((resolve, reject) => {
+        const img_width = 1080;
+        const img_height = 1920;
+
+        const canvas = createCanvas(img_width, img_height);
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)'; // White background
+        ctx.fillRect(0, 0, img_width, img_height);
+
+        let x_cord = 50;
+        let y_cord = 60;
+        const line_height = 60
     
     ctx.fillStyle = 'rgba(0, 0, 240, 0.1)'; // Red text color
     ctx.font = 'bold 60px Arial, sans-serif'; 
@@ -174,22 +175,33 @@ function createQuestionImage(question, options, ans) {
     y_cord += line_height*2 
         
     const buffer = canvas.toBuffer('image/png');
+
+    fs.writeFile('./resource/image/image_que.png', buffer, (err) => {
+        if (err) {
+            console.error('Error writing file:', err);
+            reject(err); // Reject the promise if there's an error
+        } else {
+            console.log('File written successfully: ./resource/image/image_que.png');
+            resolve(); // Resolve the promise if writing the file is successful
+        }
+    });
     
-    fs.writeFileSync('./resource/image/image_que.png', buffer);
+});
 }
 
-function createAnswerImage(question, options, ans) {    
-    const img_width = 1080;
-    const img_height = 1920;
-    
-    const canvas = createCanvas(img_width, img_height);
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)'; // White background
-    ctx.fillRect(0, 0, img_width, img_height);
-    
-    let x_cord = 50;
-    let y_cord = 60;
-    const line_height = 60
+async function createAnswerImage(question, options, ans) {
+    return new Promise((resolve, reject) => {
+        const img_width = 1080;
+        const img_height = 1920;
+
+        const canvas = createCanvas(img_width, img_height);
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)'; // White background
+        ctx.fillRect(0, 0, img_width, img_height);
+
+        let x_cord = 50;
+        let y_cord = 60;
+        const line_height = 60
     
     ctx.fillStyle = 'rgba(0, 0, 240, 0.1)'; // Red text color
     ctx.font = 'bold 60px Arial, sans-serif'; 
@@ -350,9 +362,20 @@ function createAnswerImage(question, options, ans) {
     
     y_cord += line_height*2 
         
+    // =====================
     const buffer = canvas.toBuffer('image/png');
+
+    fs.writeFile('./resource/image/image_ans.png', buffer, (err) => {
+        if (err) {
+            console.error('Error writing file:', err);
+            reject(err); // Reject the promise if there's an error
+        } else {
+            console.log('File written successfully: ./resource/image/image_ans.png');
+            resolve(); // Resolve the promise if writing the file is successful
+        }
+    });
     
-    fs.writeFileSync('./resource/image/image_ans.png', buffer);
+    });
 }
 
 // Example usage:
