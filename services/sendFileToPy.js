@@ -12,7 +12,7 @@ const filePaths = [
     './resource/music/music_ans.mp3',   
 ];
 
-async function sendFiles() {
+async function sendFiles(subject) {
     console.log("SEND FILES TO PA CALLED!")
     const formData = new FormData();
 
@@ -29,8 +29,8 @@ async function sendFiles() {
             // Append file to FormData object with a dynamic field name
             formData.append('files', fileStream, fileName);
             console.log(filePath)
-
         }
+        formData.append('message',subject);
 
         const response = await axios.post(`${process.env.BASE_URL_PA}upload/`, formData, {
             headers: {

@@ -84,7 +84,7 @@ router.get('/send', async (req, res) => {
 
           // createAnswerImage(question,options,answer)
           await createMusic(question,options,answer)
-          await sendFiles()
+          await sendFiles(subject)
           // await deleteFiles()
         }
         res.json({ success: true, message:"API MAIN EXECUTED SUCCESSFULLY" });
