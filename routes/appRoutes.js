@@ -12,7 +12,7 @@ router.get('/send', async (req, res) => {
         const getInfoResponse = await axios.get(`${process.env.BASE_URL}sheet/getQData`);
         const data = getInfoResponse.data.data
         // data.length
-        for (let i = 1; i<=1; i++) {
+        for (let i = 1; i<=data.length; i++) {
           const [subject, sheetKey, chatId, ...sheets] = data[i];
           const numberOfPairs = sheets.length / 2;
 
