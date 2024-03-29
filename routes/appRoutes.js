@@ -12,10 +12,11 @@ router.get('/send', async (req, res) => {
         const getInfoResponse = await axios.get(`${process.env.BASE_URL}sheet/getQData`);
         const data = getInfoResponse.data.data
         // data.length
-        for (let i = 1; i<=data.length; i++) {
+        for (let i = 1; i<data.length; i++) {
           const [subject, sheetKey, chatId, ...sheets] = data[i];
           const numberOfPairs = sheets.length / 2;
           if(numberOfPairs == 0){
+            console.log(`Skipping SUBJECT - ${subject} `)
             continue
           }
 
@@ -66,7 +67,7 @@ router.get('/send', async (req, res) => {
           const question = queData[0]
           const options = queData.slice(1,5)
           const answer = queData[5]
-
+          
           const teleResponse = await axios.post(`${process.env.BASE_URL}tele/send-poll`,{question,options,answer,chatId});
           if (!teleResponse && !teleResponse.data && !teleResponse.data.success){
             console.error(`Telegram Failed to send poll!`);

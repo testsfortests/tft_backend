@@ -45,7 +45,7 @@ router.post('/send-poll', async(req, res) => {
     }
 
     const parameters = {
-        "chat_id": process.env.chatId, // handle
+        "chat_id": chatId, // handle
         "question": question,
         "options": JSON.stringify(options), 
         "is_anonymous": true,
