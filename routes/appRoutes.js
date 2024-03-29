@@ -15,6 +15,9 @@ router.get('/send', async (req, res) => {
         for (let i = 1; i<=data.length; i++) {
           const [subject, sheetKey, chatId, ...sheets] = data[i];
           const numberOfPairs = sheets.length / 2;
+          if(numberOfPairs == 0){
+            continue
+          }
 
           const today = new Date();
           const utcTime = today.getTime();
