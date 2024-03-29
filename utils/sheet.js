@@ -1,6 +1,7 @@
 import { google } from 'googleapis';
 import { SHEET_SCOPE_URL } from '../utils/constants.js';
 import fs from 'fs/promises';
+import logger from '../utils/logger.js';
 
 async function readCellValue(SPREADSHEET_KEY, SHEET_NAME, CELL = "A1:Z") {
   const credentialsData = await fs.readFile(process.env.CREDENTIAL_JSON_PATH);
@@ -23,12 +24,12 @@ async function readCellValue(SPREADSHEET_KEY, SHEET_NAME, CELL = "A1:Z") {
     const data = response.data.values;
 
     if (!data || data.length === 0) {
-      console.log('Sheet is empty.');
+      logger.info('Sheet is empty.');
       return [];
     }
     return data;
   } catch (error) {
-      console.error('SHEET is not available', error.message);
+      logger.error('SHEET is not available', error.message);
       return [];
   }
 }
@@ -62,7 +63,7 @@ async function writeCellValue(SPREADSHEET_KEY, SHEET_NAME, CELL, VALUE) {
         const success = result.status === 200;
         return success;
     } catch (error) {
-        console.error('Error writing cell value:', error.message);
+        logger.error('Error writing cell value:', error.message);
         return false;
     }
 }

@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { createCanvas } from 'canvas';
+import logger from '../utils/logger.js';
 
 async function createQuestionImage(question, options, ans) {
     return new Promise((resolve, reject) => {
@@ -178,10 +179,10 @@ async function createQuestionImage(question, options, ans) {
 
     fs.writeFile('./resource/image/image_que.png', buffer, (err) => {
         if (err) {
-            console.error('Error writing file:', err);
+            logger.error('Error writing file:', err);
             reject(err); // Reject the promise if there's an error
         } else {
-            console.log('File written successfully: ./resource/image/image_que.png');
+            logger.info('File written successfully: ./resource/image/image_que.png');
             resolve(); // Resolve the promise if writing the file is successful
         }
     });
@@ -367,10 +368,10 @@ async function createAnswerImage(question, options, ans) {
 
     fs.writeFile('./resource/image/image_ans.png', buffer, (err) => {
         if (err) {
-            console.error('Error writing file:', err);
+            logger.error('Error writing file:', err);
             reject(err); // Reject the promise if there's an error
         } else {
-            console.log('File written successfully: ./resource/image/image_ans.png');
+            logger.info('File written successfully: ./resource/image/image_ans.png');
             resolve(); // Resolve the promise if writing the file is successful
         }
     });

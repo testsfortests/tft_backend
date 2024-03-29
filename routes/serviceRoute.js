@@ -3,6 +3,7 @@ const router = express.Router();
 import {uploadFile} from "../services/megad.js"
 
 import {upload} from "../utils/multer.js"
+import logger from '../utils/logger.js';
 
 router.post('/upload-to-mega',upload.single('file'), async (req, res) => {
     try {
@@ -16,7 +17,7 @@ router.post('/upload-to-mega',upload.single('file'), async (req, res) => {
 
         res.status(200).send('File uploaded successfully!');
     } catch (error) {
-        console.error('Error uploading file:', error);
+        logger.error('Error uploading file:', error);
         res.status(500).send('Internal server error');
     }
 });

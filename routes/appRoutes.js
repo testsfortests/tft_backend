@@ -5,18 +5,27 @@ import {getInfoBySubjectAndSheetName, writeCellValue} from "../utils/sheet.js"
 import { createQuestionImage,createAnswerImage } from '../services/image.js';
 import { createMusic } from '../services/music.js';
 import { deleteFiles, sendFiles } from '../services/sendFileToPy.js';
+import logger from '../utils/logger.js';
+import path from 'path';
+import fs from 'fs';
+import FormData from 'form-data';
+
+const logDirectory = './resource/logs';
+const logFilePath = path.join(logDirectory, 'logfile.log');
 
 router.get('/send', async (req, res) => {
-    console.log("API MAIN FUNC CALLED!!!")
+    // Clear the log file before writing logs
+    fs.writeFileSync(logFilePath, '');
+    logger.info("API MAIN FUNC CALLED!!!")
     try {
         const getInfoResponse = await axios.get(`${process.env.BASE_URL}sheet/getQData`);
         const data = getInfoResponse.data.data
         // data.length
-        for (let i = 1; i<data.length; i++) {
+        for (let i = 1; i<2; i++) {
           const [subject, sheetKey, chatId, ...sheets] = data[i];
           const numberOfPairs = sheets.length / 2;
           if(numberOfPairs == 0){
-            console.log(`Skipping SUBJECT - ${subject} `)
+            logger.info(`Skipping SUBJECT - ${subject} `)
             continue
           }
 
@@ -33,7 +42,7 @@ router.get('/send', async (req, res) => {
 
           const info = getInfoBySubjectAndSheetName(data,subject,sheet)
           if (info === null) {
-            console.error(`Info not found for subject ${subject} and sheet ${sheet}`);
+            logger.error(`Info not found for subject ${subject} and sheet ${sheet}`);
             continue; 
           }
 
@@ -43,7 +52,7 @@ router.get('/send', async (req, res) => {
 
           const getAllData = await axios.get(`${process.env.BASE_URL}sheet/getAllData`,{data :{subject,sheet,sheetKey}});
           if (!getAllData || !getAllData.data || !getAllData.data.success){
-            console.error(`Data not found for subject ${subject} and sheet ${sheet}`);
+            logger.error(`Data not found for subject ${subject} and sheet ${sheet}`);
             continue;
           }
           const responseData = getAllData.data.data;
@@ -70,12 +79,12 @@ router.get('/send', async (req, res) => {
           
           const teleResponse = await axios.post(`${process.env.BASE_URL}tele/send-poll`,{question,options,answer,chatId});
           if (!teleResponse && !teleResponse.data && !teleResponse.data.success){
-            console.error(`Telegram Failed to send poll!`);
+            logger.error(`Telegram Failed to send poll!`);
             continue;
           }          
           const haveWritten = await writeCellValue(process.env.DATA_SPREADSHEET_KEY,process.env.DATA_SHEET_NAME,qCell,qIndex)
           if (!haveWritten){
-          console.error(`Not written to the cell SHEET - ${sheet}, CELL - ${qCell}, VALUE - ${qIndex}`);
+          logger.error(`Not written to the cell SHEET - ${sheet}, CELL - ${qCell}, VALUE - ${qIndex}`);
           continue;
           }
           // TODO 
@@ -91,11 +100,33 @@ router.get('/send', async (req, res) => {
           await sendFiles(subject)
           // await deleteFiles()
         }
+
+        const logFilePath = "./resource/logs/logfile.log";
+        const logFileData = fs.readFileSync(logFilePath); // Read the file synchronously
+
+        // Write the contents to a temporary file
+        const tempFilePath = './temp.log';
+        fs.writeFileSync(tempFilePath, logFileData);
+
+        // Create a read stream from the temporary file
+        const fileStream = fs.createReadStream(tempFilePath);
+
+        const formData = new FormData();
+        formData.append('file', fileStream);
+
+        const response = await axios.post(`${process.env.BASE_URL}tele/send-file`, formData, {
+            headers: {
+                ...formData.getHeaders(),
+            },
+        });
+
+        console.log("Sent log file to Telegram ");
         res.json({ success: true, message:"API MAIN EXECUTED SUCCESSFULLY" });
 
     } catch (error) {
       res.status(500).json({ success: false,message :'Error in sending full poll', error: error });
     }
+
   });
 
 export default router;

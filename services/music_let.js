@@ -1,5 +1,6 @@
 import fs from 'fs';
 import axios from 'axios';
+import logger from '../utils/logger.js';
 
 async function textToSpeech(text, language = 'hi') {
     try {
@@ -22,9 +23,9 @@ async function textToSpeech(text, language = 'hi') {
         // Write the response data (MP3 audio) to a file
         fs.writeFileSync('./resource/music_ans.mp3', response.data);
 
-        console.log('Text converted to speech and saved as music.mp3');
+        logger.info('Text converted to speech and saved as music.mp3');
     } catch (error) {
-        console.error('Error converting text to speech:', error.message);
+        logger.error('Error converting text to speech:', error.message);
     }
 }
 
@@ -54,7 +55,7 @@ options.forEach((option, index) => {
 // Add the answer
 text += `The answer is: ${options[answer - 1]}`;
 
-console.log(text);
+logger.info(text);
 // Example usage:
 // const text = "यह एक सैंपल पाठ है so plz come fast आएगा या नहीं बता दे भाई";
 textToSpeech(text);

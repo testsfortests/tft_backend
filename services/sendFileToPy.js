@@ -2,6 +2,8 @@ import axios from 'axios';
 import fs from 'fs'
 import FormData from 'form-data'
 import path from 'path';
+import logger from '../utils/logger.js';
+
 import dotenv from "dotenv" 
 dotenv.config()
 
@@ -13,7 +15,7 @@ const filePaths = [
 ];
 
 async function sendFiles(subject) {
-    console.log("SEND FILES TO PA CALLED!")
+    logger.info("SEND FILES TO PA CALLED!")
     const formData = new FormData();
 
     try {
@@ -28,7 +30,7 @@ async function sendFiles(subject) {
 
             // Append file to FormData object with a dynamic field name
             formData.append('files', fileStream, fileName);
-            console.log(filePath)
+            logger.info(filePath)
         }
         formData.append('message',subject);
 
@@ -39,9 +41,9 @@ async function sendFiles(subject) {
             },
         });
 
-        console.log('Response:', response.data);
+        logger.info('Response:', response.data);
     } catch (error) {
-        console.error('Error:', error.response);
+        logger.error('Error:', error.response);
     }
 }
 
@@ -50,10 +52,10 @@ async function deleteFiles() {
     try {
         for (const filePath of filePaths) {
             await fs.promises.unlink(filePath);
-            console.log(`File ${filePath} deleted successfully`);
+            logger.info(`File ${filePath} deleted successfully`);
         }
     } catch (error) {
-        console.error('Error deleting files:', error);
+        logger.error('Error deleting files:', error);
     }
 }
 

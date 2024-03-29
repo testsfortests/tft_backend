@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import logger from '../utils/logger.js';
 import { Storage } from 'megajs'
 import { config } from 'dotenv';
 config();
@@ -33,7 +34,7 @@ async function uploadFile(filePath) {
         // Delete the uploaded file from the server's upload folder
         fs.unlinkSync(filePath);
     } catch (error) {
-        console.error('Error uploading file to Mega:', error);
+        logger.error('Error uploading file to Mega:', error);
         throw error;
     }
 }

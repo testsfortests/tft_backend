@@ -3,11 +3,12 @@ import {readCellValue,writeCellValue, getInfoBySubjectAndSheetName} from "../uti
 const router = express.Router();
 import axios from 'axios';
 import dotenv from "dotenv" 
+import logger from '../utils/logger.js';
 import { callbackPromise } from 'nodemailer/lib/shared/index.js';
 dotenv.config()
 
 router.get('/getAllData', async (req, res) => {
-  console.log("Get All Data handler called !!!")
+  logger.info("Get All Data handler called !!!")
   const { subject, sheet, sheetKey } = req.body;
 
   // Check if subject or sheet is missing

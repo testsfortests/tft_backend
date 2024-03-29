@@ -1,4 +1,5 @@
 import gtts from "gtts";
+import logger from '../utils/logger.js';
 
 // const num1 = ["first","second","third","fourth"]
 const num2 = ["a","b","c","d"]
@@ -11,7 +12,7 @@ async function saveToMP3Async(text, filename) {
             if (err) {
                 reject(err); // Reject promise if there's an error
             } else {
-                console.log(`Speech saved to ${filename}`);
+                logger.info(`Speech saved to ${filename}`);
                 resolve(); // Resolve promise if saving is successful
             }
         });
@@ -34,9 +35,9 @@ async function createMusic(question, options, ans) {
         await saveToMP3Async(text1, './resource/music/music_que.mp3');
         await saveToMP3Async(text2, './resource/music/music_ans.mp3');
 
-        console.log('Music files created successfully.');
+        logger.info('Music files created successfully.');
     } catch (error) {
-        console.error('Error creating music files:', error);
+        logger.error('Error creating music files:', error);
     }
 }
 

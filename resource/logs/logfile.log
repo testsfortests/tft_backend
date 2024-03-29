@@ -1,0 +1,18 @@
+[2024-03-30 02:21:21] [info] API MAIN FUNC CALLED!!!
+[2024-03-30 02:21:22] [info] Get All Data handler called !!!
+[2024-03-30 02:21:25] [info] File ./resource/image/image_que.png deleted successfully
+[2024-03-30 02:21:25] [info] File ./resource/image/image_ans.png deleted successfully
+[2024-03-30 02:21:25] [info] File ./resource/music/music_que.mp3 deleted successfully
+[2024-03-30 02:21:25] [info] File ./resource/music/music_ans.mp3 deleted successfully
+[2024-03-30 02:21:27] [info] File written successfully: ./resource/image/image_que.png
+[2024-03-30 02:21:27] [info] File written successfully: ./resource/image/image_ans.png
+[2024-03-30 02:21:30] [info] Speech saved to ./resource/music/music_que.mp3
+[2024-03-30 02:21:30] [info] Speech saved to ./resource/music/music_ans.mp3
+[2024-03-30 02:21:30] [info] Music files created successfully.
+[2024-03-30 02:21:30] [info] SEND FILES TO PA CALLED!
+[2024-03-30 02:21:30] [info] ./resource/image/image_que.png
+[2024-03-30 02:21:30] [info] ./resource/image/image_ans.png
+[2024-03-30 02:21:30] [info] ./resource/music/music_que.mp3
+[2024-03-30 02:21:30] [info] ./resource/music/music_ans.mp3
+[2024-03-30 02:22:12] [info] Response: Video Sent to Telegram 
+[2024-03-30 02:22:12] [info] TELE SEND-FILE ENDPOINT CALLED !

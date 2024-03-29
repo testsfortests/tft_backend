@@ -5,6 +5,7 @@ import path from 'path';
 const router = express.Router();
 import FormData from 'form-data'
 import {upload} from "../utils/multer.js"
+import logger from '../utils/logger.js';
 
 import dotenv from "dotenv" 
 dotenv.config()
@@ -45,7 +46,7 @@ router.post('/send-poll', async(req, res) => {
     }
 
     const parameters = {
-        "chat_id": chatId, // handle
+        "chat_id": process.env.TEST_MODE == "TRUE" ? process.env.TESTING_CHAT_ID : chatId, // handle -> process.env.TESTING_CHAT_ID vs chatId 
         "question": question,
         "options": JSON.stringify(options), 
         "is_anonymous": true,
@@ -70,7 +71,7 @@ router.post('/send-poll', async(req, res) => {
 router.post('/send-file',upload.single('file'), async (req, res) => {
     try {
         // Check if a file path was provided in the request
-        console.log("TELE SEND-FILE ENDPOINT CALLED !")
+        logger.info("TELE SEND-FILE ENDPOINT CALLED !")
         if (!req.file) {
             return res.status(400).send('No file was uploaded.');
         }
@@ -102,7 +103,7 @@ router.post('/send-file',upload.single('file'), async (req, res) => {
             return res.status(500).json({ success: false, message: 'Failed to send file to Telegram.', error: response.data });
         }
     } catch (error) {
-        console.error('Error sending file to Telegram:', error);
+        logger.error('Error sending file to Telegram:', error);
         return res.status(500).json({ success: false, message: 'Internal server error.' });
     }
 });
