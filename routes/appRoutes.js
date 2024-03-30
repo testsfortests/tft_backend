@@ -11,21 +11,25 @@ import fs from 'fs';
 import FormData from 'form-data';
 
 const logDirectory = './resource/logs';
-const logFilePath = path.join(logDirectory, 'logfile.log');
+const logFilePath = path.join(logDirectory, 'logfileJS.log');
 
 router.get('/send', async (req, res) => {
     // Clear the log file before writing logs
     fs.writeFileSync(logFilePath, '');
-    logger.info("API MAIN FUNC CALLED!!!")
+    logger.info("API MAIN FUNC CALLED...")
     try {
         const getInfoResponse = await axios.get(`${process.env.BASE_URL}sheet/getQData`);
+        logger.info("Q DATA FETCHED...")
+
         const data = getInfoResponse.data.data
         // data.length
         for (let i = 1; process.env.TEST_MODE === "QA" ? i < 2 : i < data.length; i++) {
           const [subject, sheetKey, chatId, ...sheets] = data[i];
+          logger.info(`SUBJECT - ${subject} starting...`)
+
           const numberOfPairs = sheets.length / 2;
           if(numberOfPairs == 0){
-            logger.info(`Skipping SUBJECT - ${subject} `)
+            logger.warn(`Skipping SUBJECT - ${subject} `)
             continue
           }
 
@@ -45,7 +49,9 @@ router.get('/send', async (req, res) => {
             logger.error(`Info not found for subject ${subject} and sheet ${sheet}`);
             continue; 
           }
-
+          else{
+            logger.info(`Info fetched By Subject and Sheet for : SUBJECT - ${subject} & SHEET - ${sheet}`)
+          }
           let { qIndex, qCell } = info;
           qIndex = parseInt(qIndex, 10); 
           qIndex += 1
@@ -55,9 +61,13 @@ router.get('/send', async (req, res) => {
             logger.error(`Data not found for subject ${subject} and sheet ${sheet}`);
             continue;
           }
+          else {
+            logger.info(`Data found for SUBJECT - ${subject} & SHEET - ${sheet}`);
+          }
           const responseData = getAllData.data.data;
           if (responseData.length == qIndex){
               qIndex = 1
+              logger.warn(`Reinitializing QIndex for  SUBJECT - ${subject} & SHEET - ${sheet}`);
           }
           let queData = responseData[qIndex];
 
@@ -79,40 +89,59 @@ router.get('/send', async (req, res) => {
           
           const teleResponse = await axios.post(`${process.env.BASE_URL}tele/send-poll`,{question,options,answer,chatId});
           if (!teleResponse && !teleResponse.data && !teleResponse.data.success){
-            logger.error(`Telegram Failed to send poll!`);
+            logger.error(`Telegram Failed to send poll...`);
             continue;
           }          
+          else {
+            logger.info(`Telegram Successful to send poll...`);
+          }
           const haveWritten = await writeCellValue(process.env.DATA_SPREADSHEET_KEY,process.env.DATA_SHEET_NAME,qCell,qIndex)
           if (!haveWritten){
-          logger.error(`Not written to the cell SHEET - ${sheet}, CELL - ${qCell}, VALUE - ${qIndex}`);
-          continue;
+            logger.error(`Not written to the cell SHEET - ${sheet}, CELL - ${qCell}, VALUE - ${qIndex}`);
+            continue;
+          }
+          else{
+            logger.info(`written to the cell SHEET - ${sheet}, CELL - ${qCell}, VALUE - ${qIndex}`);
           }
           // TODO 
           await deleteFileOrDirectory()
+          logger.info(`Deleted unnecessary files from server...`);
           // createQuestionImage(question,options,answer)
           await Promise.all([
             createQuestionImage(question, options, answer),
             createAnswerImage(question, options, answer)
             ]);
-
+          logger.info("Image creation completed...")
           // createAnswerImage(question,options,answer)
           await createMusic(question,options,answer)
+          logger.info("Music creation completed...")
+          logger.info("Sending files to PA server for further process...")
           await sendFiles(subject)
           // await deleteFiles()
+          logger.info("Files processed successfully from PA Server...")
         }
 
-        const logFilePath = "./resource/logs/logfile.log";
+        const logFilePath = "./resource/logs/logfileJS.log";
         
-        const fileStream = fs.createReadStream(logFilePath);
 
         const formData = new FormData();
-        formData.append('file', fileStream);
+
+        const file_data = fs.readFileSync(logFilePath);
+        // Create a buffer from the file data
+        const fileBuffer = Buffer.from(file_data);
+
+        // Append the file buffer to the form data
+        formData.append('file', fileBuffer, {
+          filename: 'logfileJS.log' // Provide filename if needed
+        });
+
 
         const response = await axios.post(`${process.env.BASE_URL}tele/send-file`, formData, {
             headers: {
                 ...formData.getHeaders(),
             },
         });
+
 
         console.log("Sent log file to Telegram ");
         res.json({ success: true, message:"API MAIN EXECUTED SUCCESSFULLY" });

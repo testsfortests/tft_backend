@@ -41,12 +41,12 @@ router.post('/send-poll', async(req, res) => {
     const chatId = req.body && req.body.chatId ? req.body.chatId :  process.env.TESTING_CHAT_ID  ;        
 
     if (question.length >= 300){
-        const response = await axios.post(`${process.env.BASE_URL}tele/send-message`,{message :question});
+        const response = await axios.post(`${process.env.BASE_URL}tele/send-message`,{message :question,chatId:chatId});
         question = "CHOOSE : "
     }
 
     const parameters = {
-        "chat_id": process.env.TEST_MODE == "QA" ? process.env.TESTING_CHAT_ID : chatId, 
+        "chat_id": process.env.TEST_MODE === "QA" ? process.env.TESTING_CHAT_ID : chatId, 
         "question": question,
         "options": JSON.stringify(options), 
         "is_anonymous": true,

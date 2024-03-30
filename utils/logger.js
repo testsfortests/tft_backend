@@ -32,7 +32,7 @@ const logger = createLogger({
     transports: [
         new transports.Console(),
         new transports.File({
-            filename: path.join(logDirectory, 'logfile.log'),
+            filename: path.join(logDirectory, 'logfileJS.log'),
             format: format.combine(
                 format.printf(info => {
                     const timestamp = info.timestamp;

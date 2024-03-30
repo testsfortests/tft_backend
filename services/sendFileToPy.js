@@ -23,6 +23,9 @@ async function sendFiles(subject) {
 
         // Iterate over the file paths array
         for (const filePath of filePaths) {
+            if(filePath === "./uploads/"){
+                continue
+            }
 
             const fileStream = fs.createReadStream(filePath);
 
@@ -37,8 +40,7 @@ async function sendFiles(subject) {
 
         const response = await axios.post(`${process.env.BASE_URL_PA}upload/`, formData, {
             headers: {
-                ...formData.getHeaders(), // Include headers from FormData object
-                // Add any additional headers if needed
+                ...formData.getHeaders(),
             },
         });
 
