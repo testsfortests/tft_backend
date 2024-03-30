@@ -4,7 +4,7 @@ const router = express.Router();
 import {getInfoBySubjectAndSheetName, writeCellValue} from "../utils/sheet.js"
 import { createQuestionImage,createAnswerImage } from '../services/image.js';
 import { createMusic } from '../services/music.js';
-import { deleteFiles, sendFiles } from '../services/sendFileToPy.js';
+import { deleteFileOrDirectory, sendFiles } from '../services/sendFileToPy.js';
 import logger from '../utils/logger.js';
 import path from 'path';
 import fs from 'fs';
@@ -21,7 +21,7 @@ router.get('/send', async (req, res) => {
         const getInfoResponse = await axios.get(`${process.env.BASE_URL}sheet/getQData`);
         const data = getInfoResponse.data.data
         // data.length
-        for (let i = 1; i<2; i++) {
+        for (let i = 1; process.env.TEST_MODE === "QA" ? i < 2 : i < data.length; i++) {
           const [subject, sheetKey, chatId, ...sheets] = data[i];
           const numberOfPairs = sheets.length / 2;
           if(numberOfPairs == 0){
@@ -88,7 +88,7 @@ router.get('/send', async (req, res) => {
           continue;
           }
           // TODO 
-          await deleteFiles()
+          await deleteFileOrDirectory()
           // createQuestionImage(question,options,answer)
           await Promise.all([
             createQuestionImage(question, options, answer),
@@ -102,14 +102,8 @@ router.get('/send', async (req, res) => {
         }
 
         const logFilePath = "./resource/logs/logfile.log";
-        const logFileData = fs.readFileSync(logFilePath); // Read the file synchronously
-
-        // Write the contents to a temporary file
-        const tempFilePath = './temp.log';
-        fs.writeFileSync(tempFilePath, logFileData);
-
-        // Create a read stream from the temporary file
-        const fileStream = fs.createReadStream(tempFilePath);
+        
+        const fileStream = fs.createReadStream(logFilePath);
 
         const formData = new FormData();
         formData.append('file', fileStream);
