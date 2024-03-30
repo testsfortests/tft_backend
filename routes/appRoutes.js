@@ -122,31 +122,36 @@ router.get('/send', async (req, res) => {
         }
 
         const logFilePath = "./resource/logs/logfileJS.log";
-        
-
         const formData = new FormData();
-
         const file_data = fs.readFileSync(logFilePath);
-        // Create a buffer from the file data
         const fileBuffer = Buffer.from(file_data);
-
-        // Append the file buffer to the form data
         formData.append('file', fileBuffer, {
           filename: 'logfileJS.log' // Provide filename if needed
         });
-
-
         const response = await axios.post(`${process.env.BASE_URL}tele/send-file`, formData, {
             headers: {
                 ...formData.getHeaders(),
             },
         });
-
-
         console.log("Sent log file to Telegram ");
+
         res.json({ success: true, message:"API MAIN EXECUTED SUCCESSFULLY" });
 
     } catch (error) {
+        const logFilePath = "./resource/logs/logfileJS.log";
+        const formData = new FormData();
+        const file_data = fs.readFileSync(logFilePath);
+        const fileBuffer = Buffer.from(file_data);
+        formData.append('file', fileBuffer, {
+          filename: 'logfileJS.log' // Provide filename if needed
+        });
+        const response = await axios.post(`${process.env.BASE_URL}tele/send-file`, formData, {
+            headers: {
+                ...formData.getHeaders(),
+            },
+        });
+        console.log("Sent log file to Telegram ");
+        
       res.status(500).json({ success: false,message :'Error in sending full poll', error: error });
     }
 
