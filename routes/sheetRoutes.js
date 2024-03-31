@@ -79,5 +79,36 @@ router.get('/getInfoBySubjectAndSheetName', async (req, res) => {
   }
 });
 
+router.post('/insertQuestion', async (req, res) => {
+  try {
+    const question = req.body.question 
+    const options = req.body.options 
+
+    if (!question || !options) {
+      return res.status(400).json({success:false, message: "Question and Options are required" });
+    }
+    const index_array = await readCellValue("14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I","NEW","F2");
+    const index = parseInt(index_array[0][0])
+
+    const done1 = await writeCellValue("14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I","NEW" ,`A${index+1}`, question)
+    const done2 = await writeCellValue("14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I","NEW" ,`B${index+1}`, options[0])
+    const done3 = await writeCellValue("14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I","NEW" ,`C${index+1}`, options[1])
+    const done4 = await writeCellValue("14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I","NEW" ,`D${index+1}`, options[2])
+    const done5 = await writeCellValue("14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I","NEW" ,`E${index+1}`, options[3])
+
+    const done6 = await writeCellValue("14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I", "NEW", "F2", index+1)
+
+    if(!done6){
+      return res.status(400).json({success:false, message: "sheet didn't get access" });
+    }
+
+    res.json({ success: true,message:"Data inserted successfully to the sheet" });
+  } catch (error) {
+    res.status(500).json({ success: false,message :'Error in inserting data to  Sheet', error: error.message });
+  }
+});
+
+
+
 
 export default router;
