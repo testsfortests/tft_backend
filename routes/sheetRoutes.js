@@ -83,11 +83,12 @@ router.post('/insertQuestion', async (req, res) => {
   try {
     const question = req.body.question 
     const options = req.body.options 
+    const answer = req.body.answer
 
-    if (!question || !options) {
-      return res.status(400).json({success:false, message: "Question and Options are required" });
+    if (!question || !options || !answer) {
+      return res.status(400).json({success:false, message: "Question, Options and Answer are required" });
     }
-    const index_array = await readCellValue("14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I","NEW","F2");
+    const index_array = await readCellValue("14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I","NEW","G1");
     const index = parseInt(index_array[0][0])
 
     const done1 = await writeCellValue("14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I","NEW" ,`A${index+1}`, question)
@@ -95,10 +96,11 @@ router.post('/insertQuestion', async (req, res) => {
     const done3 = await writeCellValue("14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I","NEW" ,`C${index+1}`, options[1])
     const done4 = await writeCellValue("14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I","NEW" ,`D${index+1}`, options[2])
     const done5 = await writeCellValue("14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I","NEW" ,`E${index+1}`, options[3])
+    const done6 = await writeCellValue("14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I","NEW" ,`F${index+1}`, answer)
 
-    const done6 = await writeCellValue("14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I", "NEW", "F2", index+1)
+    const done7 = await writeCellValue("14PY1yNdKIImeoKPikhH9RNMcLrD8WK7tev8CjEre51I", "NEW", "G1", index+1)
 
-    if(!done6){
+    if(!done7){
       return res.status(400).json({success:false, message: "sheet didn't get access" });
     }
 
