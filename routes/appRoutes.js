@@ -13,7 +13,7 @@ import FormData from 'form-data';
 const logDirectory = './resource/logs';
 const logFilePath = path.join(logDirectory, 'logfileJS.log');
 
-router.get('/send', async (req, res) => {
+router.all('/send', async (req, res) => {
     // Clear the log file before writing logs
     fs.writeFileSync(logFilePath, '');
     logger.info("API MAIN FUNC CALLED...")
