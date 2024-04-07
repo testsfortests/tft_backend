@@ -47,6 +47,8 @@ app.get('/', (req, res) => {
             <marquee behavior="scroll" direction="left" class="blue-text">Developed by Pawan Kumar</marquee>
         </footer>
     </body>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7611708809151256"
+     crossorigin="anonymous"></script>
     </html>
     `;
     res.send(htmlContent);
